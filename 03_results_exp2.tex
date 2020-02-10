@@ -1,0 +1,75 @@
+
+\subsection{Experiment 2}
+
+SSince we assumed non-zero label noise in Theorem \ref{theorem} we investigate how the classification error of \textit{overfitted} and \textit{interpolated} classifiers behave with added noise. We use the Gaussian Kernel (applicable to the theorem) and different sized subsamples of MNIST, CIPHAR-10 and the Synthetic dataset described in Section 3. The \textit{overfitted} classifiers are trained until they reach zero classification error or 100 iterations, after which the training error was less than 1 percent in all cases.
+
+\begin{figure}[p]
+
+\begin{subfigure}{0.49\textwidth}
+% \includegraphics[width=\linewidth]{img/Figure234_MNIST.png}
+\caption{Classification Error} \label{fig:2a}
+\end{subfigure}
+\hspace*{\fill} % separation between the subfigures
+\begin{subfigure}{0.49\textwidth}
+% \includegraphics[width=\linewidth]{img/Figure234_MNIST_norm.png}
+\caption{Norm} \label{fig:2b}
+\end{subfigure}
+\caption{MNIST} \label{fig:2}
+
+\begin{subfigure}{0.49\textwidth}
+% \includegraphics[width=\linewidth]{img/Figure234_CIFAR.png}
+\caption{Classification Error} \label{fig:3a}
+\end{subfigure}
+\hspace*{\fill} % separation between the subfigures
+\begin{subfigure}{0.49\textwidth}
+% \includegraphics[width=\linewidth]{img/Figure234_CIFAR_norm.png}
+\caption{Norm} \label{fig:3b}
+\end{subfigure}
+\caption{CIFAR-10} \label{fig:3}
+
+\end{figure}
+
+
+In Figure 2 and 3 we can see that even after adding a considerable amount of noise the classification error decreases with training data size. This might not be surprising initially since more data often yields better performance in machine learning tasks. However, the RKHS norm increases quickly, as predicted by Theorem \ref{theorem}, therefore leaving us with no good explanation for the generalization properties. Note, on the MNIST dataset the classifier achieves close to optimal performance.
+
+% \begin{figure}
+% \begin{subfigure}{0.5\textwidth}
+% \includegraphics[width=\linewidth]{img/Figure234_Synthetic2.png}
+% \caption{Classification Error} \label{fig:4a}
+% \end{subfigure}
+% \hspace*{\fill} % separation between the subfigures
+% \begin{subfigure}{0.5\textwidth}
+% \includegraphics[width=\linewidth]{img/Figure234_Synthetic2_norm.png}
+% \caption{Norm} \label{fig:4b}
+% \end{subfigure}
+% \caption{Synthetic 2} \label{fig:4}
+% \end{figure}
+
+\begin{figure}[p]
+
+\begin{subfigure}{0.49\textwidth}
+% \includegraphics[width=\linewidth]{img/Figure234_Synthetic2_extended.png}
+\caption{Classification Error} \label{fig:5a}
+\end{subfigure}
+\hspace*{\fill} % separation between the subfigures
+\begin{subfigure}{0.49\textwidth}
+% \includegraphics[width=\linewidth]{img/Figure234_Synthetic2_norm_extended.png}
+\caption{Norm} \label{fig:5b}
+\end{subfigure}
+\caption{Synthetic, d=50} \label{fig:5}
+
+\begin{subfigure}{0.49\textwidth}
+% \includegraphics[width=\linewidth]{img/Figure234_exp_Synthetic2.png}
+\caption{Classification Error} \label{fig:6a}
+\end{subfigure}
+\hspace*{\fill} % separation between the subfigures
+\begin{subfigure}{0.49\textwidth}
+% \includegraphics[width=\linewidth]{img/Figure234_exp_Synthetic2_norm.png}
+\caption{Norm} \label{fig:6b}
+\end{subfigure}
+\caption{Synthetic, d=4 \\(Note: the norm at 10000 samples is NaN not zero)} \label{fig:6}
+
+\end{figure}
+Now for the first time somewhat conflicting with the results of Belkin et al., in Figure \ref{fig:5} we can see that the norm seems not to scale exponentially with the training data size. We encountered this behaviour by simply extending the training sample size of the same experiment conducted by Belkin et al. Looking back at Theorem \ref{theorem} this indicates that due to the $d^{\text{th}}$ root the exponential term does not yet dominate the bound itself. Note that the classifiers here are around 5\% off the Bayes Optimal performance, but clearly learned something useful.
+
+In Figure \ref{fig:6} we ran the same experiment, but with only 4 input features instead of 50. Interestingly, we can now see that once the norm increases exponentially the classifiers performance drops to random guessing. This could potentially imply that we can explain the generalization using existing bounds, contradicting the claims made by Belkin et al. However, it would take much more analysis before we should draw any conclusions from this single non-generalizing example. Presumably they picked $d=50$ deliberately, so we assume they are aware that using less dimensions makes it harder to produce the desired generalization properties, but still believe researchers should seek for new bounds independent of the norm.

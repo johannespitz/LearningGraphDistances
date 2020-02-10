@@ -1,0 +1,110 @@
+
+
+\appendix
+\appendixpage
+
+
+Here the proof of Theorem \ref{theorem} and some more practical findings, which are not immediately relevant to the main story of this report:
+
+\section{Proof of Theorem \ref{theorem}} \label{proof}
+
+\begin{proof}
+Let $B_R = \{f \in \mathscr{H}, \norm{f}_{\mathscr{H}} < R\} \subset \mathscr{H}$ be the ball of functions which have a RKHS norm less than or equal to $R$, let $l(f(\mathbf{x}), y) = \max(t - y f(\mathbf{x}), 0)$ be the hinge loss with margin $t$, and let $V_{\gamma}(B_R)$ be the fat shattering dimension of the function space $B_R$ with the parameter $\gamma$.
+
+Then by Anthony and Bartlett \cite{bartlett2002} $\exists C_1, C_2 > 0$ such that with high probability $\forall_{f \in B_R}$:
+\begin{equation}
+    \abs{ \frac{1}{n} \sum_i l(f(\mathbf{x}_i), y_i) - \mathbb{E}_P[l(f(\mathbf{x}), y)] } \leq C_1 \gamma + C_2 \sqrt{\frac{V_{\gamma}(B_R)}{n}}
+\end{equation}
+
+Since $y$ is not a deterministic function of $x$, $\mathbb{E}_P[l(f(\mathbf{x}), y)] > 0$. Now we fix $\gamma > 0$ such that $C_1 \gamma < \mathbb{E}_P[l(f(\mathbf{x}), y)]$. And suppose $h \in B_R$ $t$-overfits the data, then by construction $\frac{1}{n} \sum_i l(h(\mathbf{x}_i), y_i) = 0$.
+
+\begin{equation}
+     0 < \mathbb{E}_P[l(f(\mathbf{x}), y)] - C_1 \gamma <  C_2 \sqrt{\frac{V_{\gamma}(B_R)}{n}}
+\end{equation}
+\begin{equation}
+    \frac{n}{C_2^2}(\mathbb{E}_P[l(f(\mathbf{x}), y)] - C_1 \gamma)^2 <  V_{\gamma}(B_R)
+\end{equation}
+
+Then by Belkin \cite{belkin2018b} $V_{\gamma}(B_R) < O(\log^d(\frac{R}{\gamma}))$, meaning that:
+
+\begin{equation}
+    \frac{n}{C_2^2}(\mathbb{E}_P[l(f(\mathbf{x}), y)] - C_1 \gamma)^2 < \log^d(\frac{R}{\gamma})
+\end{equation}
+\begin{equation}
+     A \mathrm{e}^{B n^\frac{1}{d}} < R \mbox{ where } A, B > 0
+\end{equation}
+
+\end{proof}
+
+
+
+
+\section{Early Stopping would have helped}
+
+\begin{figure}[!htb]
+    \centering
+    % \includegraphics[width=0.49\linewidth]{img/Overfit_Synthetic22.png}
+    \caption{Classification error over epochs on Synthetic dataset.}
+    \label{fig:stopping}
+\end{figure}
+
+During the second experiment we trained the classifiers until (almost) zero classification error since that is required for Theorem \ref{theorem} to hold. However it is very interesting that in Figure \ref{fig:stopping} we can actually see the classifier using the Gaussian Kernel drops in performance after only a few iterations on the Sythetic dataset. Recall, that this is the different to our results on MNIST and CIFAR-10.
+
+
+
+\section{Computational Reach}
+
+\begin{figure}[!htb]
+\begin{subfigure}{\textwidth}
+    \centering
+         \begin{tabular}{|c | c | c | c | c |}
+         \hline
+         Label & MNIST & CIFAR-10 & Synthetic 1 & Synthetic 2\\ [0.5ex]
+         \hline
+         Original & 8 & $>$300 & 1 & 205 \\
+         \hline
+         Random & $>$300 & $>$300 & 106 & 269 \\
+         \hline
+         \end{tabular}
+\caption{Gaussian Kernel} \label{fig:ta}
+\end{subfigure}
+\\
+\vspace{0.2cm}
+\\
+\begin{subfigure}{\textwidth}
+    \centering
+         \begin{tabular}{|c | c | c | c | c |}
+         \hline
+         Label & MNIST & CIFAR-10 & Synthetic 1 & Synthetic 2\\ [0.5ex]
+         \hline
+         Original & 3 & 5 & 1 & 5 \\
+         \hline
+         Random & 7 & 5 & 4 & 4 \\
+         \hline
+         \end{tabular}
+\caption{Laplacian Kernel} \label{fig:tb}
+\end{subfigure}
+\caption{Number of Epochs until training reached zero classification error.} \label{fig:table}
+\end{figure}
+
+In Figure \ref{fig:stopping} the Laplacian Kernel strongly outperforms the Gaussian in terms of test error, and that follows a general trend visible in all our experiments. Also very interesting in that regard is the high computational reach of the Laplacian Kernel (confer to Figure \ref{fig:table}), which is similar to the findings of Zhang et al. \cite{zhang2017} using neural networks with ReLU units. Therefore the Laplacian Kernel is not only better in terms of performance in our experiments, but also vastly superior in terms of computational effort.
+
+
+
+\section{Bandwidth}
+
+\begin{figure}[!htb]
+\centering
+\begin{subfigure}{0.42\textwidth}
+% \includegraphics[width=\linewidth]{img/Figure8_Gaussian.png}
+\caption{Gauss} \label{fig:bsa}
+\end{subfigure}
+\hspace*{\fill} % separation between the subfigures
+\begin{subfigure}{0.42\textwidth}
+% \includegraphics[width=\linewidth]{img/Figure8_Laplace.png}
+\caption{Laplace} \label{fig:bb}
+\end{subfigure}
+\caption{Comparison between gauss, laplace.} \label{fig:bandwidth}
+\end{figure}
+
+Another interesting experiment can be seen in Figure \ref{fig:bandwidth}. Here we can see that smaller bandwidth (i.e. less smoothness in case of the Gaussian Kernel) results in better performance for higher levels of noise.  This gives us the intuition that maybe the possibility for sharper "cut outs" helps generalizing on noisy datasets.

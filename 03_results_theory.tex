@@ -1,0 +1,74 @@
+
+\subsection{Theory}
+
+Surprisingly we can show that any existing generalization bounds are unlikely to explain the behaviour seen in the first experiment. Before stating the theorem (Theorem 1 in Belkin et al.) we will go over some definitions.
+
+Let $\Omega \subset \mathbb{R}^d$, and $\mathscr{H}$ the RKHS corresponding to a given kernel function $K(\mathbf{x}, \mathbf{z}) : \mathbb{R}^d \times \mathbb{R}^d \rightarrow \mathbb{R}$. Let $P$ be a probability measure on  $\Omega \times \{-1, 1\}$, and $\{(\mathbf{x}_i, y_i), i=1,...,n\}$ a dataset sampled from $P$. For the theorem to hold there must be non zero label noise, i.e. $y$ needs to be a non-deterministic function of $x$. And finally we say $h \in \mathscr{H}$ $t$-overfits the data, if and only if, it achieves zero classification error, and $\forall_i y_i h(\mathbf{x}_i) > t > 0$. This margin condition needs to be added because without it, we could always scale a solution by some constant, allowing us to control the RKHS norm arbitrarily.
+
+
+% \blfootnote{Interpolation requires $\forall_i y_i = h(\mathbf{x}_i)$}
+
+% don't have to train hinge loss (just have to get to t-overfitted classifier)
+
+% \blfootnote{The results also apply to other classes of smooth kernels}
+
+
+% what is Fat shattering dimension
+% chrome-extension://oemmndcbldboiebfnladdacbdfmadadm/https://arxiv.org/pdf/1801.03437.pdf
+% page 9
+
+\begin{theorem}
+\label{theorem}
+Any $h \in \mathscr{H}$ corresponding to a Gaussian kernel that $t$-overfits the data satisfies with high probability
+\begin{equation}
+\norm{h}_\mathscr{H} > A \mathrm{e}^{B n^\frac{1}{d}} 
+\end{equation}
+for some constants $A, B > 0$ depending on $t$.
+\end{theorem}
+
+% \begin{proof}
+% Let $B_R = \{f \in \mathscr{H}, \norm{f}_{\mathscr{H}} < R\} \subset \mathscr{H}$ be the ball of functions which have a RKHS norm less than or equal to $R$, let $l(f(\mathbf{x}), y) = \max(t - y f(\mathbf{x}), 0)$ be the hinge loss with margin $t$, and let $V_{\gamma}(B_R)$ be the fat shattering dimension of the function space $B_R$ with the parameter $\gamma$.
+
+% Then by Anthony and Bartlett \cite{bartlett2002} $\exists C_1, C_2 > 0$ such that with high probability $\forall_{f \in B_R}$:
+% \begin{equation}
+%     \abs{ \frac{1}{n} \sum_i l(f(\mathbf{x}_i), y_i) - \mathbb{E}_P[l(f(\mathbf{x}), y)] } \leq C_1 \gamma + C_2 \sqrt{\frac{V_{\gamma}(B_R)}{n}}
+% \end{equation}
+
+% Since $y$ is not a deterministic function of $x$, $\mathbb{E}_P[l(f(\mathbf{x}), y)] > 0$. Now we fix $\gamma > 0$ such that $C_1 \gamma < \mathbb{E}_P[l(f(\mathbf{x}), y)]$. And suppose $h \in B_R$ $t$-overfits the data, then by construction $\frac{1}{n} \sum_i l(h(\mathbf{x}_i), y_i) = 0$.
+
+% \begin{equation}
+%      0 < \mathbb{E}_P[l(f(\mathbf{x}), y)] - C_1 \gamma <  C_2 \sqrt{\frac{V_{\gamma}(B_R)}{n}}
+% \end{equation}
+% \begin{equation}
+%     \frac{n}{C_2^2}(\mathbb{E}_P[l(f(\mathbf{x}), y)] - C_1 \gamma)^2 <  V_{\gamma}(B_R)
+% \end{equation}
+
+% Then by Belkin \cite{belkin2018b} $V_{\gamma}(B_R) < O(\log^d(\frac{R}{\gamma}))$, meaning that:
+
+% \begin{equation}
+%     \frac{n}{C_2^2}(\mathbb{E}_P[l(f(\mathbf{x}), y)] - C_1 \gamma)^2 < \log^d(\frac{R}{\gamma})
+% \end{equation}
+% \begin{equation}
+%      A \mathrm{e}^{B n^\frac{1}{d}} < R \mbox{ where } A, B > 0 
+% \end{equation}
+
+% \end{proof}
+
+The proof can be found in Appendix \ref{proof}. Considering that that most generalization bounds are of the form
+
+\begin{equation}
+    \lvert \underbrace{\textstyle \frac{1}{n} \sum_i l(f(\mathbf{x}_i), y_i)}_{\mathclap{\text{Train Loss}}} - \underbrace{\textstyle \mathbb{E}_P[l(f(\mathbf{x}), y)]}_{\mathclap{\text{Expected Test Loss}}}  \rvert \leq C_1 + C_2 \frac{\norm{f}_\mathscr{H}^\alpha}{n^\beta}
+\end{equation}
+with $ C_1, C_2, \alpha, \beta \geq 0$, we may conclude that for large enough $n$ these bounds are trivial.
+
+
+
+% Tikhonov (\lambda \norm{f}^2) => R < O(1 / \sqrt{\lambda})
+% gradient descent => norm increases by at most O(t) in each iteration
+% 1801.03437.pdf
+
+% have bound and can force functions to be inside, but the good ones are outside...
+
+
+% real world datasets have most probably some noise, but lets add some more just be sure
+% so lets see what happens with noise
