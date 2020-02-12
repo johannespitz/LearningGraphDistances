@@ -1,3 +1,15 @@
 \section{Related Work}
 
-Except from the mainly analyzed work by Belkin et al. \cite{belkin2018a} most research regarding the surprising generalization properties of overfitted classifiers is done in deep neural networks. For example, Poggio et al. \cite{poggio2018} showed that properties of stochastic gradient descent (SGD) for linear networks also hold for deep non-linear networks. Firstly, SGD enforces an implicit form of regularization and converges to the minimum norm solution, and secondly for classification tasks this minimum norm solution is also the maximum margin solution. Therefore, it yields good generalization results on low noise datasets. Bartlett et al. \cite{bartlett2017} showed that SGD selects predictors whose complexity scales with the difficulty of the learning task and conclude that the good generalization is a property of the optimization algorithm. Zhang et al. \cite{zhang2017} successfully trained state-of-the-art convolutions neural networks (CNN) on randomly labeled datasets close to zero classification error and found that choosing the right model family or regularization techniques doesn't explain the small difference between training and test performance on correctly labeled datasets.
+Graphs are intersting because you can represent anything as a graph.
+Convolutional networks were extremly successful \cite{alexnet2012}.
+Graph Convolution Network, Kipf and Welling \cite{kipf2017}.
+Most research involving deep learning and graphs has focused on node and graph classification, but recently researchers have started applying these tools to the problem of graph distance estimation.
+
+Riba et al. \cite{riba2018} proposed a siamese network consistis of two GCN and then Hausdorf Distance (chamfer).
+
+Bai et al. \cite{bai2019} proposed to use attention to aggregate the embeddings and addtionally use histogram of pairwise distances (though not backpropable).
+CNN1 \cite{bai2018_cnn1} \cite{bai2018_cnn2} requires somewhat arbitrary ordering.
+
+Li et al. \cite{li2019} proposed to use allow messages passed from one graph to the other via cross-graph matching vector.
+
+Fey at al. \cite{fey2020_update} propsed to use sinkhorn matching after GCN (and consensus stuff, which is not relevant to our work)

@@ -1,14 +1,12 @@
 \section{Introduction}
 
-Closely following the work of Beklin et al. \cite{belkin2018a} we will investigate the generalization properties of kernel methods and compare our results to recent work in deep neural networks.
+In this report I summarize the work I did during my guided research. The main part of the report is focuses on the findings that are relevant to a potential paper submission, while in the appendix I will write more about the process and some of the less important work I have done.
 
+The main part of the report starts with an analysis of related work in the area of graph distance learning and graph matching. Then \dots
+
+Main contributions:
 \begin{itemize}
-    \item First we show experimentally that overfitted or interpolated kernel classifiers generalize well onto unseen test sets.
-    \item Then we look at the proof given by Belkin et al. showing that currently known bounds are unlikely to explain this behaviour.
-    \item From our final experiment we conclude that more analysis regarding the correlation of training data size, function norm, and generalization properties is required.
+    \item Propose method for graph distance learing that scales to larger graphs. \\ (With Nystrom/Multiscale $\rightarrow$ First sub $n^2$ that scales to larger graphs).
+    \item Experimentaly show that it outperforms other methods on task of Graph Edit Distance estimation.
+    \item Show that our application of sinkhorn has advantages over previous work.
 \end{itemize}
-
-
-% Finally we conclude that it would be great if people come up with a more useful generalization bound :D.
-
-% To summarize, in this report we will critically analyze the results of Belkin et al. and show that more theoretical and experimental work is needed to explain the generalization of overfitted classifiers.

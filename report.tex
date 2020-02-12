@@ -27,9 +27,11 @@
 %You can add theorem-like environments (e.g. remark, definition, ...) if you want
 \newtheorem{theorem}{Theorem}
 
-\title{Kernel methods and Deep Learning II} % Replace with your title
+\title{Learning graph distances} % Replace with your title
+% \newcommand{\shorttitle}{\title}
+% \shorttitle{Learning graph distances}
 \author{Johannes Pitz} % Replace with your name
-\institute{\textit{Seminar: Optimization and Generalization in Deep Learning}}
+\institute{\textit{Guided Research: Data Analytics and Machine Learning Group  \protect\\ TUM Department of Informatics}}
 
 \makeatletter
 \let\runauthor\@author
@@ -41,15 +43,13 @@
 
 \begin{document}
 
+\title{Learning graph distances \protect\\ via graph neural networks and node matching}
 \maketitle
 
 \begin{abstract}
 
-In deep neural networks often models which were trained until they reach zero training error with little to no regularization perform better on unseen test sets than the same model trained with early stopping and/or explicit regularization. This effect is contradicting the general wisdom taught in machine learning classes, that overfitting will lead to decreasing test performance. It is not well understood, why these generalization properties can be observed. 
+Graph matching can be improved by proper application of sinkhorn, and graph distance learning can scale to large graphs by using matching.
 
-This report will show that the mentioned effect is not unique to deep neural networks, but can also be observed in kernel methods. We will show that kernel methods can be viewed as two-layer neural networks. Therefore it might be advantageous to closely investigate the much simpler kernel methods before trying to understand more complex deep architectures. Moreover, we argue that the effect might not be a property of the model alone, but instead depend on the data, optimizer and model.
-
-% (127 words) + last sentence
 
 \end{abstract}
 

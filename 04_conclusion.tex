@@ -1,11 +1,3 @@
 \section{Conclusion}
 
-The first experiment clearly shows similar generalization behaviour between the modern highly overparameterized deep neural networks and classical kernel methods, therefore it might be very valuable to investigate kernel methods further as suggested by Belkin et al. \cite{belkin2018a}, and apply potential findings to more complex deep networks.
-
-The theoretical result clearly shows that generalization bounds for kernel classifiers depending on the norm are not useful for very large datasets. However, it remains unclear whether there would still be good generalization if we trained on datasets large enough to force the exponential component of the lower bound on the function norm to dominate the other constants. Further experimental work with larger datasets and more computational resources, or more realistically, with lower dimensional input features could clear up these questions. Moreover, it might even give us more intuition about where to focus the search for new generalization bounds independent of the norm (as suggested by Belkin et al.).
-
-
-Saying that we should also not ignore the possibility that the generalization depends on the optimization algorithm as indicated by Poggio et al. \cite{poggio2018} and Bartlett et al. \cite{bartlett2017}, or on properties of the dataset. Properties which are shared among real datasets, but are not easily expressible and more importantly might not be found in dully created synthetic datasets. I.e. Zhang et al. \cite{zhang2017} argue that we need a precise formal measure under which complex models are simple, but we could also extend that claim to datasets. 
-
-
-Potentially it is a combination of properties of data, optimizer, and model which is required to explain the effects we observe. Therefore we believe research needs to be done in all directions, and simple cases like kernel methods should be exploited as much as possible in order to get closer to understanding what is happening in deep neural networks.
+Using matching for distance computation has great potential. Can compute matching fast and still be fully differentiable. Works great on GED.
