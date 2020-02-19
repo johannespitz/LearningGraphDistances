@@ -1,15 +1,75 @@
 \section{Related Work}
 
-Graphs are intersting because you can represent anything as a graph.
-Convolutional networks were extremly successful \cite{alexnet2012}.
-Graph Convolution Network, Kipf and Welling \cite{kipf2017}.
-Most research involving deep learning and graphs has focused on node and graph classification, but recently researchers have started applying these tools to the problem of graph distance estimation.
+Graph $G = {V, E}$ where $E$ is assumed to be much smaller than $V^2$
 
-Riba et al. \cite{riba2018} proposed a siamese network consistis of two GCN and then Hausdorf Distance (chamfer).
+% Graphs are intersting because you can represent anything as a graph.
+% Convolutional networks were extremly successful \cite{alexnet2012}.
+% Graph Convolution Network, Kipf and Welling \cite{kipf2017}.
+% Most research involving deep learning and graphs has focused on node and graph classification, but recently researchers have started applying these tools to the problem of graph distance estimation.
 
-Bai et al. \cite{bai2019} proposed to use attention to aggregate the embeddings and addtionally use histogram of pairwise distances (though not backpropable).
-CNN1 \cite{bai2018_cnn1} \cite{bai2018_cnn2} requires somewhat arbitrary ordering.
+Most conceivable datasets can be represented as a graph or a set of graphs. Not only “graph-like” datasets such as social networks or chemical molecules fall into this category, also, i.e. executable binaries can be represented by control flow graphs or pictures can be represented by the graph of keypoints. This broad range of applicability, and the recent success of deep learning across different tasks [vision, rl, nlp] has spurred on the research in the application of deep neural networks to graphs. Borowing the idea of convolutional layers (\citealp{alexnet2012}) from conputer vision, \cite{kipf2017} introduced Graph Convolutional Networks (GCN) which can be implemented efficiently via message passing between connected nodes. Based on this message passing mechanism researchers have improved upon classical state-of-the-art methods in node classification and graph classification [find something in the pytorch-geometric list].
+% message passing formulas
 
-Li et al. \cite{li2019} proposed to use allow messages passed from one graph to the other via cross-graph matching vector.
+In this report we investigate the problem of graph matching and graph distance (or similarity) estimation. A graph matching establishes a node correspondence between graphs, maximising corrosponding node and edge affinity (\citealp{fey2020_update}; \citealp{wang2019}). For a detailed review of classical research into graph matching, recent neural network methods, and the applications of graph matching we refer the reader to \cite{fey2020_update}. Graph distance or grpah similarity estimation refers to the problem of learning a metric relating different graphs from a given distribution. Intersting applications include detecting fraudulent binaries by means of control flow graphs (\citealp{{li2019}}), graph-based keyword spotting {\citealp{riba2018}}, and in particular predicting the Graph Edit Distance.
 
-Fey at al. \cite{fey2020_update} propsed to use sinkhorn matching after GCN (and consensus stuff, which is not relevant to our work)
+The Graph Edit Distance (GED) between two graphs is defined analog to the String Edit Distance.
+\begin{equation}
+     \text{GED}(g_{1},g_{2}) = \min_{(e_{1},...,e_{k}) \in \mathcal{P}(g_{1},g_{2})} \sum_{i=1}^{k} c(e_{i})
+\end{equation}
+where $e_{i}$ are edit operations: edge/node addtion, removal, and substituion, $c(e)$ the cost of an edit operation, and $\mathcal{P}(g_{1},g_{2})$ the edit paths that transform $g_{1}$ into a graph isomorphic to $g_{2}$. The GED is widly used in graph similarity search, i.e. with reduced graphs of chemical compounds (\citealp{chem2006}), in fingerprint matching (\citealp{fingerprint2005}), or image indexing (\citealp{image_index2008}). Since computing the GED is NP-complete \cite{np_complete1998} it usually needs to be approximated. There are multiple classical algorithms to approximate the GED, some of them can gurantuee to find a lower bound (\cite{hungarian2009}) or upper bound (\citealp{hed2015}). However, due to their origin in optimization there is always a trade off between speed and accuracy, in which the faster approximations consider only very local node structures (\citealp{riba2018}).
+
+% approximations riba
+% classical methods bai
+% our method to compute exact distance
+% applications
+
+% Faced with the great significance yet huge difficulty of computing the exact GED between two graphs,
+% a flurry of approximate algorithms have been proposed with a trade-off between speed and accuracy.
+% However, these methods usually require rather complicated design and implementation based on discrete optimization or combinatorial search. The time complexity is usually polynomial or even sub-exponential in
+% the number of nodes in the graphs, such as HED
+% (Fischer et al. 2015), Hungarian (Riesen and Bunke 2009),
+% VJ (Fankhauser, Riesen, and Bunke 2011), A*-Beamsearch
+% (Beam) (Neuhaus, Riesen, and Bunke 2006), etc
+
+Recently researchers started applying graph neural networks based on the message passing mechanism to the task of GED approximation. Bai et al. proposed in 2018 (published \citealp{bai2019}) to apply the same GCN to both graphs and aggregate the resulting node embeddings with an attention layer into two graph embedding, which can be used to compute a distance. In addition to this fully differentiable and therefore trainable part, they compute a histogram of the pairwise distances between the node embeddings to incorporate some of the local node level information. However, the histogram method is not differentiable and it is unclear if the model can properly exploit this information. Moreover, this process reduces any graph to fixed-size embeddings and is unlikely to scale to larger graphs without hand-tuning the embedding size. Despite these flaws the authors show that their method significantly outperforms classical methods while being orders of magnitude faster at inference.
+% In particular they compared their results with the Hungarian algorithm (\citealp{hungarian2009}), VJ
+
+% The first category of baselines includes three classic algorithms
+% for GED computation. (1) A*-Beamsearch (Beam) [28]. It is a variant
+% of the A* algorithm in sub-exponential time. (2) Hungarian [23, 35]
+% and (3) Volgenant Jonker VJ [9, 18] are two cubic-time algorithms based on the Hungarian Algorithm for bipartite graph matching, and the algorithm
+% of Volgenant and Jonker, respectively
+
+Later \cite{bai2018_cnn1} proposed to compute the pairwise distances between nodes after each layer of the GCN and apply standard 2-D Convolutional Neural Networks (CNN) to these matrices. The main problems with this approach as described in their work are:
+\begin{itemize}
+     \item \textbf{Permutation invariance.} The ordering of the nodes in the graph represenation should not change the computed distance.
+     \item \textbf{Spatial locality.} CNN's introduce a strong strucutral prior by making the assumption that nearby points are strongly realted while further apart points are not.
+\end{itemize}
+The authors alleviate these problems by using breadth-first-search node-ordering (\citealp{bfs2018}). They claim that nearby nodes are sorted close to each other. However, clearly this cannot be true in general for all nodes. Furthermore, the ordering is not unique, as it is not yet known if there exists an polynomial algorithm to find a canonical ordering (\citealp{canonical2016}). While this is not a principled approach the authors show an intersting connection between convolutional kernels and the optimal assignment (Section 4.1) and show strong empirical results compared to the previously mentioned classical algorithms.
+% and bipartite matching (Section 4.2)
+
+Presumalby indepently, \cite{riba2018} proposed a similar siamese network to estimate graph distances.  They apply the same GCN to both graphs generating sets $A$ and $B$ of node embeddings (one for each graph). The distance between two graphs is then computed as:
+\begin{equation}
+     d(g_{1}, g_{2}) = \frac{\sum_{a \in A} \inf_{b \in B} d(a, b) + \sum_{a \in A} \inf_{b \in B} d(a, b)}{\vert V_1 \vert + \vert V_2 \vert}
+\end{equation}
+This equation is derived as a soft variant of the Hausdorf Distance, which is also known as the Chamfer Distance in computer vision (\citealp{chamfer1977}). Instead of approximating the GED directly they validate their method on graph classification and keyword spotting datasets. Therefore, their empirical results are difficult to compare to Bai et al. (2018; 2019). This method is interesting because it generates a complete matching between nodes and might therefore scale to larger graphs without hand-tuning the embedding size. Local node structures are incorporated during the message passing, and global and local structures are relevant for the final distance.
+
+\cite{li2019} used a similar method, called Graph Matching Network (GMN), for graph classification and detecting vulneralbe binaries by comparing control flow graphs of different compilers. The GMN also employs message passing layers to both graphs. However, they modify the message passing to allow information of one graph to flow into the node updates of the other graph.
+
+% cross-graph attention formulas
+
+This process is fully differentiable and makes use of local node level and global graph level information but still suffers from the problem of reducing the entire graph to a single embedding vector which is expected to scale unfavourably to larger graphs. Moreover, computing the cross-graph matching vector costs $O(\vert V_1 \vert \vert V_2 \vert)$. While all previously described models have technically the same complexity ($O(\vert V_1 \vert \vert V_2 \vert + \vert E_1 \vert + \vert E_2 \vert)$), the GMN computes this cross-graph matching vector for each layer.
+
+Note that in principle one could also apply GMN layers and then use the Soft Hausdorf Distance, making these two methods somewhat orthogonal.
+
+\cite{fey2020_update} apply the GCN to graph matching, meaning that the network predicts pairs of nodes that correspond to each other. In particular they test their method on keypoint matching of objects in different pictures and cross-lingual knowledge graph alignment. Although this is different task their model is extremly similar to the one of \cite{riba2018}. They also apply the same GCN to both graphs (siamse network) and compute a matching. Instead of the Soft Hausdorf Distance \cite{fey2020_update} use the Sinkhorn Nomralization \cite{sinkhorn2013} on the matrix of pairwise distances. The Sinkhorn Nomralization is an iterative process that returns a doubly stochastic matrix, which is interpreted as a soft correspondence between nodes. One could immediately find a matching by taking the maximum likelihood estimate, but the authors then apply their proposed consensus steps. They generate an injective node coloring (or random node embeddings in practice) for one graph and use the soft correspondence matrix to map these embeddings to the other graph. Using the generated node embeddings they apply another GCN to both graphs yielding, after nomralization, a new soft correspondence matrix. This consensus step is repeated multiple times and the final answer is found from the last soft correspondence matrix. Unfortunately, the authors report that in practice they used the Softmax Operator on each row, instead of Sinkhorn Normalizaton due to better gradients. This can be a problem if the graphs have different number of nodes. In a toy experiment they show that with consensus steps their method is robust to node additions and removal, but it certainly is less principled because the soft corrospondence matrix and the resulting matching depend on the order of the two graphs, $M(g_1, g_2)$ vs. $M(g_2, g_1)$.
+
+% consensus is orthogonal to our work
+
+
+% maybe add how everyone computes thier pairwise distances
+% < a, b >, MLP(a - b), ||a - b||_p
+
+
+% In the end sinkhorn > soft hausdorf, and gmn is probably obsolete
+% really fast only if we never genreate a full matching

@@ -11,6 +11,7 @@
 \usepackage{float}
 \usepackage{hyperref}
 
+\usepackage[round]{natbib}   % omit 'round' option if you prefer square brackets
 
 \usepackage{mathrsfs}
 \usepackage{commath}
@@ -63,8 +64,13 @@ Graph matching can be improved by proper application of sinkhorn, and graph dist
 
 \input{04_conclusion.tex}
 
-\bibliographystyle{plain}
+\newpage
+
+\bibliographystyle{plainnat}
 \bibliography{egbib}
+
+% cite    -> Name (year)
+% citealp -> Name, year
 
 \newpage
 
