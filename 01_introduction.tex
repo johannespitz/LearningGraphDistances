@@ -17,7 +17,11 @@ Graph distance or grpah similarity estimation refers to the problem of learning 
 
 The GED is widly used in graph similarity search, i.e. with reduced graphs of chemical compounds (\citealp{chem2006}), in fingerprint matching (\citealp{fingerprint2005}), or image indexing (\citealp{image_index2008}). Since computing the GED is NP-complete \cite{np_complete1998} it usually needs to be approximated.
 
-Previous methods have the short come that they cannot scale to larger graphs due to bottleneks (embedding vectors), or they (Riba) don't use Danskin.
+Since computing the GED is NP-complete \cite{np_complete1998} it usually needs to be approximated. There are multiple classical algorithms to approximate the GED, some of them can gurantuee to find a lower bound (\cite{hungarian2009}) or upper bound (\citealp{hed2015}). However, due to their origin in optimization there is always a trade off between speed and accuracy, in which the faster approximations consider only very local node structures (\citealp{riba2018}).
+
+
+
+Previoius attemps of using neural networks for this have the short come that they cannot scale to larger graphs due to bottleneks (embedding vectors), or they (Riba) don't use Danskin.
 
 We present a fast method to one using the other.
 
