@@ -1,3 +1,45 @@
 \subsection{Experiment 1}
 
 GED: Us vs. Riba, Bai, Li
+
+Describe all the possible settings, the best settings, and more. As you can see in Table \ref{tab:ex1-baselines} and in Table \ref{tab:ex1-ablation} there are many things happening.
+
+
+\begin{table}[htbp]
+    \addtolength{\tabcolsep}{-1pt}
+    \fontsize{9pt}{10.25pt}\selectfont
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|l|c|c|c|c|}
+        \hline
+        \multirow{2}{*}{} & \multicolumn{2}{c|}{Pref-att} & \multicolumn{2}{c|}{aids} \\ \hhline{|~|-|-|-|-|}
+        & val & test & val & test \\ \hhline{|=|=|=|=|=|}
+        Riba et al. & $5.5 \pm 0.3$ & $5.5 \pm 0.3$ & $5.5 \pm 0.3$ & $5.5 \pm 0.3$ \\ \hline
+        Bai et al. & X & X & Y & Y \\ \hline
+        Li et al. & X & X & Y & Y \\ \hline
+        GDN & X & X & Y & Y \\ \hline
+    \end{tabular}
+    \caption{GED Experiment}
+    \label{tab:ex1-baselines}
+\end{table}
+
+
+\begin{table}[htbp]
+    \addtolength{\tabcolsep}{-1pt}
+    \fontsize{9pt}{10.25pt}\selectfont
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{Configuration} & \multicolumn{2}{c|}{Pref-att} & \multicolumn{2}{c|}{aids} \\ \hline
+        Bp-dist & p-norm & val & test & val & test \\ \hhline{|=|=|=|=|=|=|}
+        \multirow{3}{*}{yes} & $p=1$ & $5.5 \pm 0.3$ & $5.5 \pm 0.3$ & $5.5 \pm 0.3$ & $5.5 \pm 0.3$ \\ \hhline{|~|-|-|-|-|-|}
+        & $p=2$ & X & X & Y & Y \\ \hhline{|~|-|-|-|-|-|}
+        & MLP & X & X & Y & Y \\ \hline
+        \multirow{3}{*}{no}  & $p=1$ & $5.5 \pm 0.3$ & $5.5 \pm 0.3$ & $5.5 \pm 0.3$ & $5.5 \pm 0.3$ \\ \hhline{|~|-|-|-|-|-|}
+        & $p=2$ & X & X & Y & Y \\ \hhline{|~|-|-|-|-|-|}
+        & MLP & X & X & Y & Y \\ \hline
+    \end{tabular}
+    \caption{Ablation Study}
+    \label{tab:ex1-ablation}
+\end{table}
