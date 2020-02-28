@@ -1,22 +1,6 @@
 \section{Related Work}
 
-Graph $G = {V, E}$ where $E$ is assumed to be much smaller than $V^2$
 
-% Graphs are intersting because you can represent anything as a graph.
-% Convolutional networks were extremly successful \cite{alexnet2012}.
-% Graph Convolution Network, Kipf and Welling \cite{kipf2017}.
-% Most research involving deep learning and graphs has focused on node and graph classification, but recently researchers have started applying these tools to the problem of graph distance estimation.
-
-Most conceivable datasets can be represented as a graph or a set of graphs. Not only “graph-like” datasets such as social networks or chemical molecules fall into this category, also, i.e. executable binaries can be represented by control flow graphs or pictures can be represented by the graph of keypoints. This broad range of applicability, and the recent success of deep learning across different tasks [vision, rl, nlp] has spurred on the research in the application of deep neural networks to graphs. Borowing the idea of convolutional layers (\citealp{alexnet2012}) from conputer vision, \cite{kipf2017} introduced Graph Convolutional Networks (GCN) which can be implemented efficiently via message passing between connected nodes. Based on this message passing mechanism researchers have improved upon classical state-of-the-art methods in node classification and graph classification [find something in the pytorch-geometric list].
-% message passing formulas
-
-In this report we investigate the problem of graph matching and graph distance (or similarity) estimation. A graph matching establishes a node correspondence between graphs, maximising corrosponding node and edge affinity (\citealp{fey2020_update}; \citealp{wang2019}). For a detailed review of classical research into graph matching, recent neural network methods, and the applications of graph matching we refer the reader to \cite{fey2020_update}. Graph distance or grpah similarity estimation refers to the problem of learning a metric relating different graphs from a given distribution. Intersting applications include detecting fraudulent binaries by means of control flow graphs (\citealp{{li2019}}), graph-based keyword spotting {\citealp{riba2018}}, and in particular predicting the Graph Edit Distance.
-
-The Graph Edit Distance (GED) between two graphs is defined analog to the String Edit Distance.
-\begin{equation}
-     \text{GED}(g_{1},g_{2}) = \min_{(e_{1},...,e_{k}) \in \mathcal{P}(g_{1},g_{2})} \sum_{i=1}^{k} c(e_{i})
-\end{equation}
-where $e_{i}$ are edit operations: edge/node addtion, removal, and substituion, $c(e)$ the cost of an edit operation, and $\mathcal{P}(g_{1},g_{2})$ the edit paths that transform $g_{1}$ into a graph isomorphic to $g_{2}$. The GED is widly used in graph similarity search, i.e. with reduced graphs of chemical compounds (\citealp{chem2006}), in fingerprint matching (\citealp{fingerprint2005}), or image indexing (\citealp{image_index2008}). Since computing the GED is NP-complete \cite{np_complete1998} it usually needs to be approximated. There are multiple classical algorithms to approximate the GED, some of them can gurantuee to find a lower bound (\cite{hungarian2009}) or upper bound (\citealp{hed2015}). However, due to their origin in optimization there is always a trade off between speed and accuracy, in which the faster approximations consider only very local node structures (\citealp{riba2018}).
 
 % approximations riba
 % classical methods bai
@@ -30,6 +14,9 @@ where $e_{i}$ are edit operations: edge/node addtion, removal, and substituion, 
 % (Fischer et al. 2015), Hungarian (Riesen and Bunke 2009),
 % VJ (Fankhauser, Riesen, and Bunke 2011), A*-Beamsearch
 % (Beam) (Neuhaus, Riesen, and Bunke 2006), etc
+
+
+The broad range of applicability (of graphs), and the recent success of deep learning across different tasks [vision, rl, nlp] has spurred on the research in the application of deep neural networks to graphs. Borowing the idea of convolutional layers (\citealp{alexnet2012}) from conputer vision, \cite{kipf2017} introduced Graph Convolutional Networks (GCN) which can be implemented efficiently via message passing between connected nodes. Based on this message passing mechanism researchers have improved upon classical state-of-the-art methods in node classification and graph classification [find something in the pytorch-geometric list].
 
 Recently researchers started applying graph neural networks based on the message passing mechanism to the task of GED approximation. Bai et al. proposed in 2018 (published \citealp{bai2019}) to apply the same GCN to both graphs and aggregate the resulting node embeddings with an attention layer into two graph embedding, which can be used to compute a distance. In addition to this fully differentiable and therefore trainable part, they compute a histogram of the pairwise distances between the node embeddings to incorporate some of the local node level information. However, the histogram method is not differentiable and it is unclear if the model can properly exploit this information. Moreover, this process reduces any graph to fixed-size embeddings and is unlikely to scale to larger graphs without hand-tuning the embedding size. Despite these flaws the authors show that their method significantly outperforms classical methods while being orders of magnitude faster at inference.
 % In particular they compared their results with the Hungarian algorithm (\citealp{hungarian2009}), VJ

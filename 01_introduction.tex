@@ -1,8 +1,25 @@
 \section{Introduction}
 
-In this report I summarize the work I did during my guided research. The main part of the report is focuses on the findings that are relevant to a potential paper submission, while in the appendix I will write more about the process and some of the less important work I have done.
+% Graphs are intersting because you can represent anything as a graph.
+% Convolutional networks were extremly successful \cite{alexnet2012}.
+% Graph Convolution Network, Kipf and Welling \cite{kipf2017}.
+% Most research involving deep learning and graphs has focused on node and graph classification, but recently researchers have started applying these tools to the problem of graph distance estimation.
 
-The main part of the report starts with an analysis of related work in the area of graph distance learning and graph matching. Then \dots
+Most conceivable datasets can be represented as a graph or a set of graphs. Not only “graph-like” datasets such as social networks or chemical molecules fall into this category, also, i.e. executable binaries can be represented by control flow graphs or pictures can be represented by the graph of keypoints. % write better in more sentences
+
+In this report we investigate the two problems:
+
+graph matching . A graph matching establishes a node correspondence between graphs, maximising corrosponding node and edge affinity (\citealp{fey2020_update}; \citealp{wang2019}). For a detailed review of classical research into graph matching, recent neural network methods, and the applications of graph matching we refer the reader to \cite{fey2020_update}.
+% Interesting applications here refer to Fey later maybe right before that paragraph
+
+and graph distance (or similarity) estimation.
+Graph distance or grpah similarity estimation refers to the problem of learning a metric relating different graphs from a given distribution. Intersting applications include detecting fraudulent binaries by means of control flow graphs (\citealp{{li2019}}), graph-based keyword spotting {\citealp{riba2018}}, and in particular predicting the Graph Edit Distance.
+
+The GED is widly used in graph similarity search, i.e. with reduced graphs of chemical compounds (\citealp{chem2006}), in fingerprint matching (\citealp{fingerprint2005}), or image indexing (\citealp{image_index2008}). Since computing the GED is NP-complete \cite{np_complete1998} it usually needs to be approximated.
+
+Previous methods have the short come that they cannot scale to larger graphs due to bottleneks (embedding vectors), or they (Riba) don't use Danskin.
+
+We present a fast method to one using the other.
 
 Main contributions:
 \begin{itemize}
@@ -10,5 +27,3 @@ Main contributions:
     \item Experimentaly show that it outperforms other methods on task of Graph Edit Distance estimation.
     \item Show that our application of sinkhorn has advantages over previous work.
 \end{itemize}
-
-In summary \dots
