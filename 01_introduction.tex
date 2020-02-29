@@ -7,20 +7,27 @@
 
 Most conceivable datasets can be represented as a graph or a set of graphs. Not only “graph-like” datasets such as social networks or chemical molecules fall into this category, also, i.e. executable binaries can be represented by control flow graphs or pictures can be represented by the graph of keypoints. % write better in more sentences
 
+The broad range of applicability (of graphs), and the recent success of deep learning across different tasks [vision, rl, nlp] has spurred on the research in the application of deep neural networks to graphs. Borowing the idea of convolutional layers (\citealp{alexnet2012}) from conputer vision, \cite{kipf2017} introduced Graph Convolutional Networks (GCN) which can be implemented efficiently via message passing between connected nodes. Based on this message passing mechanism researchers have improved upon classical state-of-the-art methods in node classification and graph classification [find something in the pytorch-geometric list].
+
 In this report we investigate the two problems:
 
-graph matching . A graph matching establishes a node correspondence between graphs, maximising corrosponding node and edge affinity (\citealp{fey2020_update}; \citealp{wang2019}). For a detailed review of classical research into graph matching, recent neural network methods, and the applications of graph matching we refer the reader to \cite{fey2020_update}.
+\textbf{Graph Matching.} A graph matching establishes a node correspondence between graphs, maximising corrosponding node and edge affinity (\citealp{fey2020_update}; \citealp{wang2019}). For a detailed review of classical research into graph matching, recent neural network methods, and the applications of graph matching we refer the reader to \cite{fey2020_update}.
 % Interesting applications here refer to Fey later maybe right before that paragraph
 
-and graph distance (or similarity) estimation.
-Graph distance or grpah similarity estimation refers to the problem of learning a metric relating different graphs from a given distribution. Intersting applications include detecting fraudulent binaries by means of control flow graphs (\citealp{{li2019}}), graph-based keyword spotting {\citealp{riba2018}}, and in particular predicting the Graph Edit Distance.
+\textbf{Graph Distance/Similarity.} Graph distance or grpah similarity estimation refers to the problem of learning a metric relating different graphs from a given distribution. Intersting applications include detecting fraudulent binaries by means of control flow graphs (\citealp{{li2019}}), graph-based keyword spotting {\citealp{riba2018}}, and in particular predicting the Graph Edit Distance.
 % but want to be able to learn any metric
 
 The GED is widly used in graph similarity search, i.e. with reduced graphs of chemical compounds (\citealp{chem2006}), in fingerprint matching (\citealp{fingerprint2005}), or image indexing (\citealp{image_index2008}). Since computing the GED is NP-complete \cite{np_complete1998} it usually needs to be approximated.
 
 Since computing the GED is NP-complete \cite{np_complete1998} it usually needs to be approximated. There are multiple classical algorithms to approximate the GED, some of them can gurantuee to find a lower bound (\cite{hungarian2009}) or upper bound (\citealp{hed2015}). However, due to their origin in optimization there is always a trade off between speed and accuracy, in which the faster approximations consider only very local node structures (\citealp{riba2018}).
 
-
+% Faced with the great significance yet huge difficulty of computing the exact GED between two graphs,
+% a flurry of approximate algorithms have been proposed with a trade-off between speed and accuracy.
+% However, these methods usually require rather complicated design and implementation based on discrete optimization or combinatorial search. The time complexity is usually polynomial or even sub-exponential in
+% the number of nodes in the graphs, such as HED
+% (Fischer et al. 2015), Hungarian (Riesen and Bunke 2009),
+% VJ (Fankhauser, Riesen, and Bunke 2011), A*-Beamsearch
+% (Beam) (Neuhaus, Riesen, and Bunke 2006), etc
 
 Previoius attemps of using neural networks for this have the short come that they cannot scale to larger graphs due to bottleneks (embedding vectors), or they (Riba) don't use Danskin.
 

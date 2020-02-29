@@ -97,7 +97,7 @@ As pointed out already the chamfer distance can easily be backpropagated. The ot
 Preliminary experiments indicated that the sinkhorn distance is not only similar fast to compute as the chamfer distance, but also yields better results than the other much slower approaches. The regularization results into softer matchings compared to hard assignments, or the still very peaky assignments of the earth mover's distance. We believe these soft assignments propagate more gradient information to the message passing network allowing it to thoroughly adapt to the given distribution. Note that by adjusting the regularization parameter $\lambda$ we can control how soft the assignments should be.
 
 % TODO
-We also evaluated our method on graph matching. When we need the matching we cannot apply Danskin's theorem, but sinkhorn at around 50 iterations can still be backpropagated just fine. In response to Fey et al. we then tried our if using the kernel as we do (and not simply scaling the cost matrix) would also improve the consensus precudure.
+In response to Fey et al. we also evaluated our method on graph matching. When we need the matching we cannot apply Danskin's theorem, but sinkhorn at around 50 iterations can still be backpropagated just fine. We wanted to see how using the kernel as we do (and not simply scaling the cost matrix) would also improve upon their results before/after consensus.
 
 % Note wikipedia gives best running times as $O(mn + n^2 * \log(n))$ for Munkres
 % and $O(N \log(N)^2)$ for EMD
