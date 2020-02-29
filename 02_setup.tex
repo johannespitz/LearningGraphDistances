@@ -5,3 +5,39 @@ Set up cost matrix (bp vs. normal, scale with $\alpha$).
 Compoute explicit matching with sinkhorn (use cost matrix as kernel, can tune $\lambda$).
 Use optimal matching for backprop.
 Multiply matching with cost matrix.
+
+
+
+% Our message function
+\begin{equation}
+     h_i^{l} = \sigma(W_{l} h_i^{l-1}) + \sum_{j \rightarrow i} \sigma(W_{l} h_j^{l-1}) E_{e_{j \rightarrow i}}
+\end{equation}
+norms
+
+
+
+% \begin{equation}
+%      C=
+%           \left[
+%           \begin{array}{ccc|ccc}
+%                C_{1,1} & \dotsi & C_{1, N_2} & C_{1, \epsilon} & \dotsi & C_{1, \epsilon} \\
+%                \vdots & \ddots & \vdots & \vdots & \ddots & \vdots \\
+%                C_{N_1, 1} & \dotsi & C_{N_1, N_2} & C_{N_1, \epsilon} & \dotsi & C_{N_1, \epsilon} \\
+%                \hline
+%                C_{\epsilon, 1} & \dotsi & C_{\epsilon, N_2} & 0 & \dotsi & 0 \\
+%                \vdots & \ddots & \vdots & \vdots & \ddots & \vdots \\
+%                C_{\epsilon, 1} & \dotsi & C_{\epsilon, N_2} & 0 & \dotsi & 0 \\
+%           \end{array}
+%           \right]
+% \end{equation}
+
+% \begin{equation}
+%      C=
+%           \left[
+%           \begin{array}{ccc|ccc}
+%                C_{1,1} & \dotsi & C_{1, N_2} & C_{1, \epsilon} \\
+%                \vdots & \ddots & \vdots & \vdots \\
+%                C_{N_1, 1} & \dotsi & C_{N_1, N_2} & C_{N_1, \epsilon} \\
+%           \end{array}
+%           \right]
+% \end{equation}
