@@ -66,8 +66,8 @@ To solve the problem we propose\footnote{\cite{riba2018} already used an implici
 
      \begin{equation}
           \begin{gathered}
-               % \min \sum_{i = 1}^{N} \sum_{j = 1}^{N} M_{ij} C_{ij} = \min d(M, C) \\
-               \min d(M, C) = \min \norm{M * C}_F \\
+               % \min \sum_{i = 1}^{N} \sum_{j = 1}^{N} M_{ij} C_{ij} = d(M, C) \\
+               d(M, C) = \min \norm{M * C}_F \\
                \text{subject to} \\
                \sum_{i = 1}^{N} M_{ij} = 1 \forall j \in \{1 \dots N\} \\
                \sum_{j = 1}^{N} M_{ij} = 1 \forall i \in \{1 \dots N\} \\
@@ -91,10 +91,13 @@ For finding a matching there are multiple possiblities:
      \item \textbf{Optimal Transport.} The optimal transport problem is a continous relaxation of the optimal assignment, where $M_{ij} \in \left[ 0,1 \right]$. In this setting usually called the \textbf{Earth Mover Distance} it can be found in roughly $O(N^3 \log(N))$ operations.
      \item \textbf{Regularaized Optimal Transport.} \cite{sinkhorn2013} introduced an algorithm for solving an entropy regularized version of the optimal transport problem minimizing $\norm{M * C}_F + \frac{1}{\lambda} H(M)$. One simply computes the kernel matrix $ K = e^{ -\frac{C}{\lambda}}$ and applies Sinkhorn’s iterative matrix scaling. This is called the \textbf{Sinkhorn Distance} and can be computed extremly fast in practice with worst case running time of $O(N^2)$.
 \end{itemize}
-As pointed out already the chamfer distance can easily be backpropagated. The other three all minize a convex function. In particular, $d(M,C)$ is convex in $C$ for every $M$, and the set of all possible matchings $M$ is compact. Therefore, we apply Danskin's theorem (\citealp{danskin1967}) to compute the derivative of the distance $d$ with respect to the cost matrix $C$, which, in this case, is simply the optimal matching $M$. That means we can easly backpropagte any of the distances mentioned above, and learn for example the GED in end-to-end fashion.
+While the chamfer distance can easily be backpropagated, the other three all minize a convex function. In particular, $d(M,C)$ is convex in $C$ for every $M$, and the set of all possible matchings $M$ is compact. Therefore, we apply Danskin's theorem (\citealp{danskin1967}) to find the derivative of the distance $d$ with respect to the cost matrix $C$. The theorem states that the derivative of a funciton of the form $f(x) = \max_{z \in Z} \phi(x,z)$ is the derivative at the optimum, which, in this case, is simply the optimal matching $M$. That means we can backpropagte any of the distances mentioned above, and learn in end-to-end fashion.
 % $f(x) = \max_{z \in Z} \phi(x,z)$
 
-Preliminary experiments indicated that the sinkhorn distance is not only similar fast to compute as the chamfer distance, but also yields better results than the other much slower approaches. The regularization results into softer matchings compared to hard assignments, or the still very peaky assignments of the earth mover's distance. We believe these soft assignments propagate more gradient information to the message passing network allowing it to thoroughly adapt to the given distribution. Note that by adjusting the regularization parameter $\lambda$ we can control how soft the assignments should be.
+Preliminary experiments indicated that the sinkhorn distance is not only similar fast to compute as the chamfer distance, but also yields better results than the other much slower methods. The regularization results into softer matchings compared to hard assignments, or the still very peaky matchings of the earth mover's distance. We believe these soft matchings propagate more gradient information to the message passing network allowing it to thoroughly adapt to the given distribution. Note that by adjusting the regularization parameter $\lambda$ we can control how soft the assignments are.
+
+% TODO
+% add metric learning loss
 
 % TODO
 In response to Fey et al. we also evaluated our method on graph matching. When we need the matching we cannot apply Danskin's theorem, but sinkhorn at around 50 iterations can still be backpropagated just fine. We wanted to see how using the kernel as we do (and not simply scaling the cost matrix) would also improve upon their results before/after consensus.

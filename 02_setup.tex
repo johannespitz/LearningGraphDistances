@@ -1,43 +1,61 @@
 \section{Setup}
 
-Siamese GCN.
-Set up cost matrix (bp vs. normal, scale with $\alpha$).
-Compoute explicit matching with sinkhorn (use cost matrix as kernel, can tune $\lambda$).
-Use optimal matching for backprop.
-Multiply matching with cost matrix.
+% Siamese GCN.
+% Aggregate
+% Set up cost matrix (bp vs. normal, scale with $\alpha$).
+% norms
+% Compoute explicit matching with sinkhorn (use cost matrix as kernel, can tune $\lambda$).
+% Use optimal matching for backprop.
+% Multiply matching with cost matrix.
+
+For our experiments we use the a siamese network structure with multiple shared message passing layers, followed by the matching step.
 
 
+Let $d_h$ be an arbitrary embedding size, $d_{\text{node}}$ be the number of node features of the input graphs, $d_{\text{edge}}$ be the number of edge features, $W_l \in \mathbb{R}^{d_h \times d_h}$, $b_l \in   \mathbb{R}^{d_h}$be a weight matrix and bias, $h_i^l \in \mathbb{R}^{d_h}$ be the embedding of node $i$ at layer $l$ for $l > 0$, $\sigma(\cdot)$ be an elementwise non-linearity, $E \in \mathbb{R}^{d_{\text{edge}} \times d_h \times d_h}$ be a weight tensor ($h_i^0 = v_i \in \mathbb{R}^{d_{\text{node}}}$ and $W_0 \in \mathbb{R}^{d_{\text{node}} \times d_h}$).
 
-% Our message function
+In our first experiment we use the following message passing function:
 \begin{equation}
-     h_i^{l} = \sigma(W_{l} h_i^{l-1}) + \sum_{j \rightarrow i} \sigma(W_{l} h_j^{l-1}) E_{e_{j \rightarrow i}}
+     h_i^{l} = \sigma(W_{l} h_i^{l-1} + b_l) + \sum_{j \rightarrow i} \sigma(W_{l} h_j^{l-1} + b_l) E_{e_{j \rightarrow i}}
 \end{equation}
-norms
+where $E_{e_{j \rightarrow i}} \in \mathbb{R}^{d_h \times d_h}$ is the weight tensor indexed by the discrete feature of the edge connecting node $j$ with node $i$.
 
+To compute the entries of the cost matrix we concatenate all node embeddings and take the norm of pairwise distances across both graphs, or the embeddings scaled by a trainable $\alpha \in \mathbb{R}^{d_\text{final}}$:
+\begin{equation}
+     \begin{gathered}
+          h_i^\text{final} = [h_L^i ; \dots ; h_1^i ; \sigma(W_{1} h_i^{0} + b_0)] \in \mathbb{R}^{d_\text{final}}\\
+          C_{i,j} = \norm{h_i^\text{final} - h_j^\text{final}} \quad
+          C_{i, \epsilon} = \norm{ \alpha h_i^\text{final}} \quad
+          C_{\epsilon, j} = \norm{ \alpha h_j^\text{final}} \quad i \in \{1 \dots N_1\}, j \in \{1 \dots N_2\}
+     \end{gathered}
+\end{equation}
 
+In our experiment we tested three different norms: the euclidian norm ($p=2$), the manhattan norm ($p=1$), and simple two layer perceptron (MLP). The first layer does not change the embedding size, then we apply a relu non-linearity. The second layer reduces the embedding size to a single number to which we apply the softplus function ($\ln(1 + e^x)$).
 
-% \begin{equation}
-%      C=
-%           \left[
-%           \begin{array}{ccc|ccc}
-%                C_{1,1} & \dotsi & C_{1, N_2} & C_{1, \epsilon} & \dotsi & C_{1, \epsilon} \\
-%                \vdots & \ddots & \vdots & \vdots & \ddots & \vdots \\
-%                C_{N_1, 1} & \dotsi & C_{N_1, N_2} & C_{N_1, \epsilon} & \dotsi & C_{N_1, \epsilon} \\
-%                \hline
-%                C_{\epsilon, 1} & \dotsi & C_{\epsilon, N_2} & 0 & \dotsi & 0 \\
-%                \vdots & \ddots & \vdots & \vdots & \ddots & \vdots \\
-%                C_{\epsilon, 1} & \dotsi & C_{\epsilon, N_2} & 0 & \dotsi & 0 \\
-%           \end{array}
-%           \right]
-% \end{equation}
+As for the matrix $C$ itself we tested two variants. The first one we call bp-distance on account of bipartite graph matching. Due to implemenation advantages we decided to padd the pairwise distances with rows and columns of $C_{i, \epsilon}, C_{\epsilon, j}$ respectively, instead of the $\infty$-values typically used.
+\begin{equation}
+     C_\text{BP}=
+          \left[
+          \begin{array}{ccc|ccc}
+               C_{1,1} & \dotsi & C_{1, N_2} & C_{1, \epsilon} & \dotsi & C_{1, \epsilon} \\
+               \vdots & \ddots & \vdots & \vdots & \ddots & \vdots \\
+               C_{N_1, 1} & \dotsi & C_{N_1, N_2} & C_{N_1, \epsilon} & \dotsi & C_{N_1, \epsilon} \\
+               \hline
+               C_{\epsilon, 1} & \dotsi & C_{\epsilon, N_2} & 0 & \dotsi & 0 \\
+               \vdots & \ddots & \vdots & \vdots & \ddots & \vdots \\
+               C_{\epsilon, 1} & \dotsi & C_{\epsilon, N_2} & 0 & \dotsi & 0 \\
+          \end{array}
+          \right]
+     \in \mathbb{R}^{(N_1 + N_2) \times (N_1 + N_2)}
+\end{equation}
+This does lead to different results after sinkhorn normalization due to the entropy regularization, but the network can easly apdapt by increasing $\norm{\alpha}_2$. Therefore this modification should not effect our trainable model. The second variant for the cost matrix is simply the smallest square sub-matrix of the one above that contains all pairwise distances, such that $C_\text{no-BP} \in \mathbb{R}^{\max({N_1, N_2}) \times \max({N_1, N_2})}$.
 
-% \begin{equation}
-%      C=
-%           \left[
-%           \begin{array}{ccc|ccc}
-%                C_{1,1} & \dotsi & C_{1, N_2} & C_{1, \epsilon} \\
-%                \vdots & \ddots & \vdots & \vdots \\
-%                C_{N_1, 1} & \dotsi & C_{N_1, N_2} & C_{N_1, \epsilon} \\
-%           \end{array}
-%           \right]
-% \end{equation}
+The final distance $d$ is then computed and trained via the mean squared error between target distance and prediction:
+\begin{equation}
+     \begin{gathered}
+          M = \text{sinkhorn-normalization}(e^{-\frac{C}{\lambda}}) \\
+          d = \norm{M * C}_F \\
+          \text{loss} = (d - d_\text{target})^2
+     \end{gathered}
+\end{equation}
+
+If we are intersted in a matching instead we %TODO
