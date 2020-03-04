@@ -58,6 +58,27 @@ The final distance $d$ is then computed and trained via the mean squared error b
      \end{gathered}
 \end{equation}
 
-If we are intersted in a matching instead we. %TODO
+\cite{fey2020_update} have recently shown that a very similar model to ours can be used to learn graph matchings. The main difference to our model is that they normalize the cost matrix $C$ instead of kernel matrix $e^{-\frac{C}{\lambda}}$. However, they report bad gradients with sinkhorn normalization and therefore use row-wise sofmax instead.
+
+
+They only use the left upper part of the cost matrix (not a problem because aim for hits@1)
+and they use the dot product of node embeddings instead of a p-norm or MLP.
+
+We use p=2, and no-BP, spline-CNN, scale the kernel matrix by $sum(C) / max(n1,n2)^2$
+Now we need to backprop through the sinkhorn iteratons!
+
+We also implemented a consensus step based on their work. We use instead of
+\\
+$C_0 = h_s \cdot h_t$\\
+$C_0 = \norm{h_s - h_t}_2$ fill with norms\\
+$C_l = C_{l - 1} + \text{MLP}(h_s - h_t)$\\
+$C_l = \beta_l C_0 + (1 - \beta_l) \text{MLP}(h_s - h_t)$ keep old norms scaled by $\alpha^2$\\
+$M_l = \text{softmax}(C_l)$ \\
+$M_l = \text{sinkhorn}(e^{-\frac{C_l * \text{reg}}{\lambda}}) \quad \text{reg} = \frac{\norm{C_l}_1}{\max(n1,n2)^2}$\\
+
+
+Therefore we set up a second experiment to show, that applying the sinkhorn normalization to the kernel matrix instead of the
+
+
 
 Implementation. We can run everything in batches, either with padded matricies (if all graphs are close to max-nodes) or in COO sparse, allowing us to batch larger graphs together with smaller ones.
