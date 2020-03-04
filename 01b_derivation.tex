@@ -1,30 +1,5 @@
 \section{Derivation of the model}
 
-% derivation
-%     (cost_matrix -> matching) premutaiton invariant (matching is because invariant)
-
-%     GED
-%     compare two graphs
-
-%     try matching
-
-%     discrete -> non differentiable
-%     -> EMD slow
-
-%     sinkhorn
-
-%     matrix scaling
-
-%     backprop in optimal (Danskin)
-
-%     (nystrom, multiscale sinkhorn)
-%     (lanmarks, cluster)
-
-%     GNN
-%     Consensus
-
-
-
 % (assume E << V^2)
 We want our model to be applicable to any set of graphs $\mathcal{G}$, where each graph $G = \{V, E\} \in \mathcal{G}$ with nodes $V$ and edges $E$ is drawn from a common distribution. The nodes and edges may have arbitrary features. Possible distributions include chemical molecules, control flow graphs, or preferential attachment graphs (\citealp{pref_att2002}).
 
@@ -91,10 +66,10 @@ For finding a matching there are multiple possiblities:
      \item \textbf{Optimal Transport.} The optimal transport problem is a continous relaxation of the optimal assignment, where $M_{ij} \in \left[ 0,1 \right]$. In this setting usually called the \textbf{Earth Mover Distance} it can be found in roughly $O(N^3 \log(N))$ operations.
      \item \textbf{Regularaized Optimal Transport.} \cite{sinkhorn2013} introduced an algorithm for solving an entropy regularized version of the optimal transport problem minimizing $\norm{M * C}_F + \frac{1}{\lambda} H(M)$. One simply computes the kernel matrix $ K = e^{ -\frac{C}{\lambda}}$ and applies Sinkhorn’s iterative matrix scaling. This is called the \textbf{Sinkhorn Distance} and can be computed extremly fast in practice with worst case running time of $O(N^2)$.
 \end{itemize}
-While the chamfer distance can easily be backpropagated, the other three all minize a convex function. In particular, $d(M,C)$ is convex in $C$ for every $M$, and the set of all possible matchings $M$ is compact. Therefore, we apply Danskin's theorem (\citealp{danskin1967}) to find the derivative of the distance $d$ with respect to the cost matrix $C$. The theorem states that the derivative of a funciton of the form $f(x) = \max_{z \in Z} \phi(x,z)$ is the derivative at the optimum, which, in this case, is simply the optimal matching $M$. That means we can backpropagte any of the distances mentioned above, and learn in end-to-end fashion.
+While the chamfer distance can easily be backpropagated, the other three all minize a convex function. In particular, $d(M,C)$ is convex in $C$ for every $M$, and the set of all possible matchings $M$ is compact. Therefore, we can apply Danskin's theorem (\citealp{danskin1967}) to find the derivative of the distance $d$ with respect to the cost matrix $C$. The theorem states that the derivative of a funciton of the form $f(x) = \max_{z \in Z} \phi(x,z)$ is the derivative at the optimum, which, in this case, is simply the optimal matching $M$. That means we can backpropagte any of the distances mentioned above, and learn in end-to-end fashion.
 % $f(x) = \max_{z \in Z} \phi(x,z)$
 
-Preliminary experiments indicated that the sinkhorn distance is not only similar fast to compute as the chamfer distance, but also yields better results than the other much slower methods. The regularization results into softer matchings compared to hard assignments, or the still very peaky matchings of the earth mover's distance. We believe these soft matchings propagate more gradient information to the message passing network allowing it to thoroughly adapt to the given distribution. Note that by adjusting the regularization parameter $\lambda$ we can control how soft the assignments are.
+Preliminary experiments indicated that the sinkhorn distance is not only similar fast to compute as the chamfer distance, but also yields better results than the other much slower methods. The regularization results into softer matchings compared to hard assignments, or the still very peaky matchings of the earth mover's distance. We believe these soft matchings propagate more gradient information to the message passing network allowing it to thoroughly adapt to the given distribution of graphs. Note that by adjusting the regularization parameter $\lambda$ we can control how soft the matchings are.
 
 % TODO
 % add metric learning loss

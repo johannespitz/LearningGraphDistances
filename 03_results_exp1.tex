@@ -1,9 +1,13 @@
 \subsection{Experiment 1}
 
-GED: Us vs. Riba, Bai, Li
+% Dataset
+For our first expermient we used sythetic preferential attachment graph \cite{pref_att2002} and real world chemical molecules of the aids dataset \cite{?}. Both datasets have discrete node and edge features, and graphs are limited to at most 30 nodes. We provide some basic dataset statists in the appendix (Table \ref{tab:ex1-data}).
 
-Describe all the possible settings, the best settings, and more. As you can see in Table \ref{tab:ex1-baselines} and in Table \ref{tab:ex1-ablation} there are many things happening.
+% Baseline Setup
+We compare our results to the implementations of \cite{riba2018}, \cite{bai2019}, and \cite{li2019} in Table \ref{tab:ex1-baselines}. All methods are described in the Related Work Section. We train for 500 epochs, and report the best error on the validation set and the corresponding test error. We ran 3 trials of every setting and searched over cross porduct of 2 different batch sizes (depending on the implementation), 32 and 64 dimensional node embeddings, 1 and 3 layers of message passing, 4 learning rates, and 4 degrees of regularization. Implementation details can be found in the respective gitlab repositories (\href{https://gitlab.lrz.de/ge98beq/siamese_ged}{Riba}, \href{https://gitlab.lrz.de/ge98beq/simgnn}{Bai}, \href{https://gitlab.lrz.de/ge98beq/gmn/tree/gr_report}{Li})
 
+% GDN Setup
+For our model, the graph distance network (GDN), we fixed the batch size to 1024, the embedding size to 32, and the number of layer to 3, and added 3 choices for the sinkhorn regularization constant $\lambda$. Moreover, we include an ablation study over the choice of the cost matrix and different norms in Table \ref{tab:ex1-ablation}.
 
 \begin{table}[htbp]
     \addtolength{\tabcolsep}{-1pt}
@@ -14,14 +18,17 @@ Describe all the possible settings, the best settings, and more. As you can see 
         \hline
         \multirow{2}{*}{} & \multicolumn{2}{c|}{Pref-Attachment} & \multicolumn{2}{c|}{Aids} \\ \hhline{|~|-|-|-|-|}
         & Val & Test & Val & Test \\ \hhline{|=|=|=|=|=|}
-        Riba et al. & $12.2 \pm 0.2$ & $12.1 \pm 0.6$ & $15.5 \pm 0.3$  & $15.6 \pm 0.3$ \\ \hline
-        Bai et al. & $7.7 \pm 1.0$ & $9.6 \pm 2.5$ & $4.2 \pm 0.3$ & $8.7 \pm 0.1$ \\ \hline
-        Li et al. & $5.5 \pm 0.1 $ & $7.8 \pm 0.3$ & $10.6 \pm 0.3$ & $11.7 \pm 0.9$ \\ \hline
+        \cite{riba2018} & $12.2 \pm 0.2$ & $12.1 \pm 0.6$ & $15.5 \pm 0.3$  & $15.6 \pm 0.3$ \\ \hline
+        \cite{bai2019} & $7.7 \pm 1.0$ & $9.6 \pm 2.5$ & $4.2 \pm 0.3$ & $8.7 \pm 0.1$ \\ \hline
+        \cite{li2019} & $5.5 \pm 0.1 $ & $7.8 \pm 0.3$ & $10.6 \pm 0.3$ & $11.7 \pm 0.9$ \\ \hline
         GDN & $4.2 \pm 0.1$ & $\boldsymbol{4.5 \pm 0.2}$ & $3.3 \pm 0.04$ & $\boldsymbol{6.2 \pm 1.0}$ \\ \hline
     \end{tabular}
-    \caption{GED Experiment}
+    \caption{RMSE to ground truth GED with standard deviation across 3 runs.}
     \label{tab:ex1-baselines}
 \end{table}
+
+% Discussion
+Table \ref{tab:ex1-baselines} shows that our method clearly outperforms all baselines. Best results on both datasets were found with the no-BP cost matrix, MLP-norm, and small weight decay for regularization. Interestinly, the only difference in the configurations is the  sinkhorn regularization constant $\lambda$, which is smaller for the synthetic graphs. However, somewhat concerning is the gap between the validation and test performance on the real world dataset, which also appers with the model of \cite{bai2019}. This phenomena will be discussed in the ablation study.
 
 
 \begin{table}[htbp]
@@ -32,16 +39,31 @@ Describe all the possible settings, the best settings, and more. As you can see 
     \begin{tabular}{|c|c|c|c|c|c|}
         \hline
         \multicolumn{2}{|c|}{} & \multicolumn{2}{c|}{Pref-Attachment} & \multicolumn{2}{c|}{Aids} \\ \hline
-        Bp-Dist & Norm & Val & Test & Val & Test \\ \hhline{|=|=|=|=|=|=|}
+        BP & Norm & Val & Test & Val & Test \\ \hhline{|=|=|=|=|=|=|}
         \multirow{3}{*}{yes} & $p=1$ & $5.2 \pm 0.1$ & $6.4 \pm 0.7$ & $3.9 \pm 0.1$ & $17.1 \pm 10.9$ \\ \hhline{|~|-|-|-|-|-|}
         & $p=2$ & $4.8 \pm 0.1$ & $5.7 \pm 0.2$ & $3.9 \pm 0.2$ & $8.6 \pm 2.6$ \\ \hhline{|~|-|-|-|-|-|}
-        & MLP & $4.5 \pm 0.1$ & $4.5 \pm 0.3$ & $3.5 \pm 0.03$ & $4.7 \pm 0.1$ \\ \hline
+        & MLP & $4.5 \pm 0.1$ & $\boldsymbol{4.5 \pm 0.3}$ & $3.5 \pm 0.03$ & $\boldsymbol{4.7 \pm 0.1}$ \\ \hline
         \multirow{3}{*}{no}  & $p=1$ & $4.9 \pm 0.2$ & $5.8 \pm 0.2$ & $3.9 \pm 0.3$ & $16.2 \pm 6.0$ \\ \hhline{|~|-|-|-|-|-|}
         & $p=2$ & $4.8 \pm 0.1$ & $5.7 \pm 0.6$ & $3.7 \pm 0.2$ & $6.8 \pm 3.4$ \\ \hhline{|~|-|-|-|-|-|}
-        & MLP & $4.2 \pm 0.1$ & $4.5 \pm 0.2$ & $3.3 \pm 0.04$ & $6.2 \pm 1.0$ \\ \hline
+        & MLP & $4.2 \pm 0.1$ & $\boldsymbol{4.5 \pm 0.2}$ & $3.3 \pm 0.04$ & $6.2 \pm 1.0$ \\ \hline
     \end{tabular}
-    \caption{Ablation Study}
+    \caption{Ablation Study: RMSE with standard deviation across 3 runs.}
     \label{tab:ex1-ablation}
 \end{table}
 
+The ablation study in Table \ref{tab:ex1-ablation} indicates that:
+\begin{itemize}
+    \item \textbf{The euclidian norm is superior to the manhatten norm, and a trainable MLP can improve results even further.}
+    \item \textbf{There comes no immediate benefit from the full size cost matrix.} In all but one case the no-BP cost matrix is at as good as the BP variant in validation and test performance. Even though intuitevly it feels convenient to have the option to explicitly add or remove nodes, it may be the case that we can get the same result by substituting one node for another in the case of the GED. However, using the no-BP matrix could certainly lead to problems when attemping to learn "sparse matchings" where only a few nodes have a match in the other graph. In fact, it is not surprising that the results are very similar because the sinkhorn normalization will place a lot of weight onto the 0 entries in the matrix. It does that to a point where summing over the part of the rows (or cloumns depending on which graph has more nodes) which had 0 entires before normalization yields values close to 1. Therefore, the matrix almost reduces itself to our no-BP variant.
+    \item \textbf{The aids validation set does not properly represent the entire distribution.} While the difference in validation and test performance on the synthetic graphs can be attributed to p-hacking (because every epoch is one chance to get a lucky TODO). The massive gap in performance, and the high standard deviation on the aids test set show that some runs were able to generalize well from the training data to the validation set, but failed completely to generalize to the test set. It is important to note that not all runs behaved that way. We also collected many runs where the test performance is close to validation performance\footnote{Often these runs had lower learning rates, but we did not run further experiments to verify that impression, since analyzing generalization peculiarities is not at the core of this report}. Apparantly the manhatten norm is more susceptible to overfit in this manner than the MLP norm.
+\end{itemize}
+
+
+% The ablation study in Table \ref{tab:ex1-ablation} suggests that the euclidian norm is superior to the manhatten norm, and that a trainable MLP improves results even further. In all but one case the no-BP cost matrix is at as good as the BP variant in validation and test performance, indicating that there comes no immediate benefit from the full the size cost matrix. Even though intuitevly it feels convenient to have the option to explicitly add or remove nodes, it may be the case that we can get the same result by substituting one node for another in the case of the GED. However, using the no-BP matrix could certainly lead to problems when attemping to learn "sparse matchings" where only a few nodes have a match in the other graph. In fact, it is not surprising that the results are very similar because the sinkhorn normalization will place a lot of weight onto the 0 entries in the matrix. It does that to a point where summing over the part of the rows (or cloumns depending on which graph has more nodes) which had 0 entires before normalization yields values close to 1. Therefore, the matrix almost reduces itself to our no-BP variant. Moreover, the massive gap between validation and test performance on the aids dataset indicates that our validation is maybe not appropriately representative
+
+% would need to make more runs to confirm this theory
+
 % Note bai has those 115 / 54 mse's
+
+
+% Describe all the possible settings, the best settings, and more. As you can see in Table \ref{tab:ex1-baselines} and in Table \ref{tab:ex1-ablation} there are many things happening.

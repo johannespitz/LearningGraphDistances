@@ -31,7 +31,7 @@ To compute the entries of the cost matrix we concatenate all node embeddings and
 
 In our experiment we tested three different norms: the euclidian norm ($p=2$), the manhattan norm ($p=1$), and simple two layer perceptron (MLP). The first layer does not change the embedding size, then we apply a relu non-linearity. The second layer reduces the embedding size to a single number to which we apply the softplus function ($\ln(1 + e^x)$).
 
-As for the matrix $C$ itself we tested two variants. The first one we call bp-distance on account of bipartite graph matching. Due to implemenation advantages we decided to padd the pairwise distances with rows and columns of $C_{i, \epsilon}, C_{\epsilon, j}$ respectively, instead of the $\infty$-values typically used.
+As for the matrix $C$ itself we tested two variants. The first one we call BP-Distance on account of bipartite graph matching. Due to implemenation advantages we decided to padd the pairwise distances with rows and columns of $C_{i, \epsilon}, C_{\epsilon, j}$ respectively, instead of the $\infty$-values typically used.
 \begin{equation}
      C_\text{BP}=
           \left[
