@@ -7,18 +7,20 @@
     \fontsize{9pt}{10.25pt}\selectfont
     \centering
     \renewcommand{\arraystretch}{1.2}
-    \begin{tabular}{|l|c|c|c|c|c|c|}
+    \begin{tabular}{|l|c|c|c|c|c|c|c|}
         \hline
-        Dataset & Node Feat & Edge Feat & Num Train & Num Val/Test & Max Nodes & Avg Nodes \\
+        Dataset & Node Feat & Edge Feat & \#Train & \#Val/Test & Max Nodes & Avg Nodes & Avg Edges \\
         \hline
-        Pref-Attachment & 6 & 4 & Num Train & Num Val/Test & 30 & Avg Nodes \\
+        Pref-Att & 6 & 4 & 144 & 48 & 30 & 20.6 & 75.4 \\ % edges mean 75.4
         \hline
-        Aids & 53 & 4 & Num Train & Num Val/Test & 30 & Avg Nodes \\
+        Aids & 53 & 4 & 144 & 48 & 30 & 20.6 & 44.6 \\ % edges mean 44.6
         \hline
     \end{tabular}
     \caption{Datasets}
     \label{tab:ex1-data}
 \end{table}
+
+Note \#Train and \#Val/Test are the number of graphs. We train and validate/test on all possible pairs of graphs, except the pairs where a graph is paired with itself.
 
 Note: For a real paper the related work section would look different of course
 Probably it would then be possible to move that section before the derivation, but it is there, because there is some background information given in the derivation that is required for such a detailed description of the related models.

@@ -61,6 +61,7 @@ Since we want our model to be capable of learning any metric on graphs we use a 
 
 For finding a matching there are multiple possiblities:
 \begin{itemize}
+     \itemsep0em
      \item \textbf{Nearest Neighbor.} Taking the sum of the row-wise minima (and, for the sake of symmetry, the sum of the column-wise minima) yields what is known in computer vision as the \textbf{Chamfer Distance}. The matching runs in $O(N^2)$ and can be implemented using the $\argmax$ operator which can be backpropagted and is already implemented in modern deep learning frameworks.
      \item \textbf{Optimal Assignment.} Applying the Kuhn-Munkres algorithm results in an optimal assignment, $M_{ij} \in \{0,1\}$, in roughly $O(N^3)$ operations. However, this is a discrete algorithm, and therefore not differentiable.
      \item \textbf{Optimal Transport.} The optimal transport problem is a continous relaxation of the optimal assignment, where $M_{ij} \in \left[ 0,1 \right]$. In this setting usually called the \textbf{Earth Mover Distance} it can be found in roughly $O(N^3 \log(N))$ operations.

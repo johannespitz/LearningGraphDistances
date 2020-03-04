@@ -5,6 +5,7 @@ For our first expermient we used sythetic preferential attachment graph \cite{pr
 
 % Baseline Setup
 We compare our results to the implementations of \cite{riba2018}, \cite{bai2019}, and \cite{li2019} in Table \ref{tab:ex1-baselines}. All methods are described in the Related Work Section. We train for 500 epochs, and report the best error on the validation set and the corresponding test error. We ran 3 trials of every setting and searched over cross porduct of 2 different batch sizes (depending on the implementation), 32 and 64 dimensional node embeddings, 1 and 3 layers of message passing, 4 learning rates, and 4 degrees of regularization. Implementation details can be found in the respective gitlab repositories (\href{https://gitlab.lrz.de/ge98beq/siamese_ged}{Riba}, \href{https://gitlab.lrz.de/ge98beq/simgnn}{Bai}, \href{https://gitlab.lrz.de/ge98beq/gmn/tree/gr_report}{Li})
+% Adam/SGD
 
 % GDN Setup
 For our model, the graph distance network (GDN), we fixed the batch size to 1024, the embedding size to 32, and the number of layer to 3, and added 3 choices for the sinkhorn regularization constant $\lambda$. Moreover, we include an ablation study over the choice of the cost matrix and different norms in Table \ref{tab:ex1-ablation}.
@@ -53,17 +54,19 @@ Table \ref{tab:ex1-baselines} shows that our method clearly outperforms all base
 
 The ablation study in Table \ref{tab:ex1-ablation} indicates that:
 \begin{itemize}
+    \itemsep0em
     \item \textbf{The euclidian norm is superior to the manhatten norm, and a trainable MLP can improve results even further.}
     \item \textbf{There comes no immediate benefit from the full size cost matrix.} In all but one case the no-BP cost matrix is at as good as the BP variant in validation and test performance. Even though intuitevly it feels convenient to have the option to explicitly add or remove nodes, it may be the case that we can get the same result by substituting one node for another in the case of the GED. However, using the no-BP matrix could certainly lead to problems when attemping to learn "sparse matchings" where only a few nodes have a match in the other graph. In fact, it is not surprising that the results are very similar because the sinkhorn normalization will place a lot of weight onto the 0 entries in the matrix. It does that to a point where summing over the part of the rows (or cloumns depending on which graph has more nodes) which had 0 entires before normalization yields values close to 1. Therefore, the matrix almost reduces itself to our no-BP variant.
-    \item \textbf{The aids validation set does not properly represent the entire distribution.} While the difference in validation and test performance on the synthetic graphs can be attributed to p-hacking (because every epoch is one chance to get a lucky TODO). The massive gap in performance, and the high standard deviation on the aids test set show that some runs were able to generalize well from the training data to the validation set, but failed completely to generalize to the test set. It is important to note that not all runs behaved that way. We also collected many runs where the test performance is close to validation performance\footnote{Often these runs had lower learning rates, but we did not run further experiments to verify that impression, since analyzing generalization peculiarities is not at the core of this report}. Apparantly the manhatten norm is more susceptible to overfit in this manner than the MLP norm.
+    \item \textbf{The aids validation set does not properly represent the entire distribution.} The difference in validation and test performance on the synthetic graphs can be attributed to data dredging (because every epoch is one chance to get a lucky TODO). However, the massive gap in performance, and the high standard deviation on the aids test set show that some runs were able to generalize well from the training data to the validation set, but failed completely to generalize to the test set. It is important to note that not all runs behaved that way. We also collected many runs where the test performance is close to validation performance\footnote{Often these runs had lower learning rates, but we did not run further experiments to verify that impression, since analyzing generalization peculiarities is not at the core of this report.}. Apparantly the manhatten norm is more susceptible to overfit in this manner than the MLP norm.
 \end{itemize}
 
 
 % The ablation study in Table \ref{tab:ex1-ablation} suggests that the euclidian norm is superior to the manhatten norm, and that a trainable MLP improves results even further. In all but one case the no-BP cost matrix is at as good as the BP variant in validation and test performance, indicating that there comes no immediate benefit from the full the size cost matrix. Even though intuitevly it feels convenient to have the option to explicitly add or remove nodes, it may be the case that we can get the same result by substituting one node for another in the case of the GED. However, using the no-BP matrix could certainly lead to problems when attemping to learn "sparse matchings" where only a few nodes have a match in the other graph. In fact, it is not surprising that the results are very similar because the sinkhorn normalization will place a lot of weight onto the 0 entries in the matrix. It does that to a point where summing over the part of the rows (or cloumns depending on which graph has more nodes) which had 0 entires before normalization yields values close to 1. Therefore, the matrix almost reduces itself to our no-BP variant. Moreover, the massive gap between validation and test performance on the aids dataset indicates that our validation is maybe not appropriately representative
 
-% would need to make more runs to confirm this theory
 
 % Note bai has those 115 / 54 mse's
 
-
-% Describe all the possible settings, the best settings, and more. As you can see in Table \ref{tab:ex1-baselines} and in Table \ref{tab:ex1-ablation} there are many things happening.
+% Best settings?
+% 0.0005 weight decay (not 0!)
+% big learning rate
+% sinkhorn_reg=0.2

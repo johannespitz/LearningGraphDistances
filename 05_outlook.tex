@@ -1,9 +1,13 @@
 \section{Outlook}
 
-ensure all properties of a metric/distance
-translational invariance of metric
-homogeneity (alpha * graph)
+Our model should be capable of learning arbitrary metrics on graphs. While metric can be diverse, there are some requirements for a function to be considered a metric in mathemetics.
+\begin{itemize}
+    \itemsep0em
+    \item $d(x,y) \ge 0$ non-negativity
+    \item $d(x,y) = 0 \Leftrightarrow x = y$ identity of indiscernibles
+    \item $d(x,y)  = d(y,x)$ symmetry
+    \item $d(x,y) \le d(x,z) + d(z, y)$ subadditivity or triangle inequality
+\end{itemize}
+We already ensured non-negativity, and symmetry, but it would certainly be interesting to investigate if we can ensure the triangle inequality. Perhaps that could lead to a small modification which induces a strong and useful prior. Also investigating the identity of indiscernibles could lead to interesting results. If it was possible to ensure this property it would solve the graph isomorphism problem, and finally answer the question of whether the problem is NP-complete or not. Maybe easier to handle and therefore more promising is translational invariance, $d(x,y) = d(x+a,y+a)$, which might be a valid assumptions in many cases. Graph sums can be defined by adding the adjacency matricies of equal sized graphs \cite{graph_sum2004} or, in the context of the gragh edit distance, maybe by adding a node that is connected to all other nodes.
 
-triangle inequality
-
-while it seems inevidable that the whole thins is quadratic in the end, we might actually be albe to get linear run time by using nystrom or multiscale matching.
+A different direction for further research is to speed up the current model. It seems inevidable that the whole process is quadratic in the number of nodes due to the use of the cost matrix $C \in \mathbb{R}^{N \times N}$. However, we might actually be albe to get linear run time by using nystrom sinkhorn (\citealp{?}) or multiscale matching (\citealp{?}). Nystrom sinkhorn avoids to ever compute the full cost matrix by using landmarks. Similarly mlutiscale matching uses clusters of nodes that are then matched with each other. One problem with both approaches is that they only produce the final distance and not an explicit matching, which would be required to apply Danskin's thoerom for fast backpropagation. Therefore, the key for implementing both of these methods will be to find an efficient way to backpropagate the gradients. Ideally one would combine both approaches since landmarks and clusters each have their merits and demerits. Using landmarks one can vastly overestimate small distances, and using clusters longer distances become inaccurate due to repeated averaging.

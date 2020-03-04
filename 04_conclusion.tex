@@ -1,6 +1,9 @@
 \section{Conclusion}
 
-Using matching for distance computation has great potential. Can compute matching fast and still be fully differentiable. Works great on GED.
+We propose to use explicit matching between pairs of graphs to allow accurate and scalable estimation of arbitrary metrics on graphs. Our model has the same theortical complexity, $O(N_1 N_2)$, as previous neural network methods designed for similar tasks. In practice the model runs quickly because our implementation can efficiently handle large mini-batches of arbitrary sized graphs making it well suited for modern GPU setups. We showed empirically that our model imporves upon state-of-the art methods in predicting the ubiquitous graph edit distance.
 
-% improves upon state-of-the-art methods in predicting the GED
+% Using matching for distance computation has great potential. Can compute matching fast and still be fully differentiable. Works great on GED.
 % no reason why we couldn't apply it to other distances
+
+
+We also showed that the model can be applied to graph matching. In close relation to the model of \cite{fey2020_update} we showed that applying the sinkhorn normalization to the kernel matrix instead of the cost matrix can improve upon softmax workaround, and should work much better if want to learn sparse matchings, where wrong matching might be punished much harder than hits@1 does. %TODO

@@ -58,4 +58,6 @@ The final distance $d$ is then computed and trained via the mean squared error b
      \end{gathered}
 \end{equation}
 
-If we are intersted in a matching instead we %TODO
+If we are intersted in a matching instead we. %TODO
+
+Implementation. We can run everything in batches, either with padded matricies (if all graphs are close to max-nodes) or in COO sparse, allowing us to batch larger graphs together with smaller ones.
