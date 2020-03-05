@@ -1,6 +1,8 @@
 \section{Conclusion}
 
-We propose to use explicit matching between pairs of graphs to allow accurate and scalable estimation of arbitrary metrics on graphs. Our model has the same theortical complexity, $O(N_1 N_2)$, as previous neural network methods designed for similar tasks. In practice the model runs quickly because our implementation can efficiently handle large mini-batches of arbitrary sized graphs making it well suited for modern GPU setups. We showed empirically that our model imporves upon state-of-the art methods in predicting the ubiquitous graph edit distance.
+% cost matrix
+
+We propose to use explicit matching between pairs of graphs to allow accurate and scalable estimation of arbitrary metrics on graphs. Our model has the same theoretical complexity, $O(N_1 N_2)$, as previous neural network methods designed for similar tasks. In practice the model runs quickly because our implementation can efficiently handle large mini-batches of arbitrary sized graphs making it well suited for modern GPU setups. We showed empirically that our model improves upon state-of-the art methods in predicting the ubiquitous graph edit distance.
 
 % Using matching for distance computation has great potential. Can compute matching fast and still be fully differentiable. Works great on GED.
 % no reason why we couldn't apply it to other distances
