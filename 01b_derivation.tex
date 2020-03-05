@@ -1,21 +1,22 @@
 \section{Derivation of the model}
 
 % (assume E << V^2)
-We want our model to be applicable to any set of graphs $\mathcal{G}$, where each graph $G = \{V, E\} \in \mathcal{G}$ with nodes $V$ and edges $E$ is drawn from a common distribution. The nodes and edges may have arbitrary features. Possible distributions include chemical molecules, control flow graphs, or preferential attachment graphs (\citealp{pref_att2002}).
+Let $\mathcal{G}$ be a set of graphs, where each graph $G = \{V, E\} \in \mathcal{G}$ with nodes $V$ and edges $E$ is drawn from a common distribution. The nodes and edges may have arbitrary features. Usually we expect the number of edges $\vert E \vert$ to be much smaller than the number of nodes squared $\vert V \vert ^2$. Possible distributions include chemical molecules, control flow graphs, or synthetic preferential attachment graphs (\citealp{pref_att2002}).
 
-% while we want to lean any distance the GED is a good motivation, since it is used so widely.
-The Graph Edit Distance (GED) between two graphs is defined analog to the String Edit Distance.
+While our model can in principle learn any metric on a set of graphs, we will focus on the ubiquitous GED for this derivation. The GED between two graphs is defined analog to the String Edit Distance.
 \begin{equation}
      \text{GED}(G_{1},G_{2}) = \min_{(e_{1},...,e_{k}) \in \mathcal{P}(g_{1},g_{2})} \sum_{i=1}^{k} c(e_{i})
 \end{equation}
-where $e_{i}$ are edit operations: edge/node addition, removal, and substitution, $c(e)$ the cost of an edit operation, and $\mathcal{P}(G_{1},G_{2})$ the edit paths that transform $G_{1}$ into a graph isomorphic to $G_{2}$.
+where $e_{i}$ are edit operations: edge/node addition, removal, and substitution, $c(e)$ is the cost of an edit operation, and $\mathcal{P}(G_{1},G_{2})$ is the set of all possible edit paths that transform $G_{1}$ into a graph isomorphic to $G_{2}$.
 
-Note that the GED and any other proper metric on graphs is symmetric and invariant to the graph representation. Clearly the GED as defined above cannot depend on the ordering in which the nodes are saved in memory. Moreover, as long as the costs of substitution are symmetric, also the GED is symmetric ($\text{GED}(G_{1},G_{2}) = \text{GED}(G_{2},G_{1})$). Therefore, a neural network approximating the GED should also be symmetric and invariant to the graph representation.
+In mathematics any metric is non-negative and symmetric ($d(x,y) = d(y,x)$). And the GED fulfills both these requirements, as long as the cost do. Therefore, a model for learning metrics should also be designed to be non-negative and symmetric. Moreover, the model should certainly be invariant to the representation of the graph, i.e. the ordering of the nodes in memory.
+% TODO
+% Note that the GED and any other proper metric on graphs is symmetric and invariant to the graph representation. Clearly the GED as defined above cannot depend on the ordering in which the nodes are saved in memory. Moreover, as long as the costs of substitution are symmetric, also the GED is symmetric ($\text{GED}(G_{1},G_{2}) = \text{GED}(G_{2},G_{1})$). Therefore, a neural network approximating the GED should also be symmetric and invariant to the graph representation.
 
-A simple but flawed idea is to embed both graphs into a common vector space and compute the distance between these two vectors. One can use message passing networks to generate node embeddings. Message passing can be applied to graphs with arbitrary features; it is invariant to the graph representation and common practice in machine learning on graphs due to efficient handling of sparse inputs. These node embeddings can then be aggregated into a single graph embedding, possibly using an attention layer. Finally, any distance between two vectors (cosine, $p$-norm, etc.) will ensure symmetric predictions. The main problem with this approach is that the embedding size becomes a bottleneck for larger graphs and the entire model would need to be trained from scratch to increase it.
+A simple neural network model that fulfills all these requirements could embed both graphs into a common vector space and compute the distance between these two vectors. One can use message passing networks to generate node embeddings. Message passing can be applied to graphs with arbitrary features; it is invariant to the graph representation and common practice in machine learning on graphs due to efficient handling of sparse inputs. These node embeddings can then be aggregated into a single graph embedding, possibly using an attention layer. Finally, any distance between two vectors (cosine, $p$-norm, etc.) will ensure valid predictions. The main problem with this approach is that the embedding size becomes a bottleneck for larger graphs and the entire model would need to be trained from scratch to increase it.
 %  \cite{li2019}, and \cite{bai2019}
 
-To solve the problem we propose\footnote{\cite{riba2018} already used an implicit matching for predicting the GED with neural networks but we will improve on their work by utilizing modern matching tools.} to match the nodes of both graphs, similar to classical GED algorithms (\citealp{hungarian2009}; \citealp{frankhauser2011}). These algorithms are based on bipartite graph matching. They set up a cost Matrix $C \in \mathbb{R}^{N \times N}$, where $N = N_1 + N_2 = \vert V_1 \vert + \vert V_2 \vert $ and solve the following constrained optimization problem.
+To solve the problem we propose\footnote{\cite{riba2018} already used an implicit matching for predicting the GED with neural networks but we will improve on their work by utilizing a classical cost matrix and modern matching tools.} to match the nodes of both graphs, similar to classical GED algorithms (\citealp{hungarian2009}; \citealp{frankhauser2011}). These algorithms are based on bipartite graph matching. They set up a cost Matrix $C \in \mathbb{R}^{N \times N}$, where $N = N_1 + N_2 = \vert V_1 \vert + \vert V_2 \vert $ and solve the following constrained optimization problem.
 
 \vspace{.2cm}
 
@@ -43,7 +44,7 @@ To solve the problem we propose\footnote{\cite{riba2018} already used an implici
      \begin{equation}
           \begin{gathered}
                % \min \sum_{i = 1}^{N} \sum_{j = 1}^{N} M_{ij} C_{ij} = d(M, C) \\
-               d(M, C) = \min \norm{M * C}_F \\
+               d(C) = \min \langle M, C \rangle_\mathrm{F} \\
                \text{subject to} \\
                \sum_{i = 1}^{N} M_{ij} = 1 \forall j \in \{1 \dots N\} \\
                \sum_{j = 1}^{N} M_{ij} = 1 \forall i \in \{1 \dots N\} \\
@@ -56,28 +57,34 @@ To solve the problem we propose\footnote{\cite{riba2018} already used an implici
 
 \vspace{.2cm}
 
-Here $*$ denotes the Hadamard product, and  $\norm{\cdot}_F $ the Frobeniusnorm. $C_{i, j}$ is the cost for replacing node $i$ with node $j$, $C_{\epsilon, j}$ the cost for inserting node $j$, and $C_{i, \epsilon}$ the cost for deleting node $i$. These costs depend on the direct neighborhood of the node, and can even be extend with random walks around it, but they lack accuracy in cases "where the direct neighborhood of graphs is not suciently discriminant" (\citealp{hungarian2009}). The assignment problem can be solved exaclty by algorithms such as the Hungarian method, also called the Kuhn-Munkres algorithm. (\citealp{hungarian1955}) or the VJ algorithm (\citealp{vj1987}).
+Here $\langle \cdot, \cdot \rangle_\mathrm{F}$ denotes the frobenius inner product. $C_{i, j}$ is the cost for replacing node $i$ with node $j$, $C_{\epsilon, j}$ the cost for inserting node $j$, and $C_{i, \epsilon}$ the cost for deleting node $i$. These costs depend on the direct neighborhood of the node, and can even be extend with random walks around it, but they still lack accuracy on graphs with complex global structures (\citealp{hungarian2009}). The assignment problem can be solved exactly by algorithms such as the Hungarian method, also called the Kuhn-Munkres algorithm. (\citealp{hungarian1955}) or the VJ algorithm (\citealp{vj1987}).
 
-Since we want our model to be capable of learning any metric on graphs we use a message passing network to learn the entires of the cost matrix $C$. The network generates node embeddings that contain information about their local neighborhood. Instead of aggregating this information we compute pairwise distances between nodes of both graphs yielding a trainable equivalent to the upper left bock of the cost matrix. The corresponding values for insertion and deletion can be computed by taking a norm of the embeddings. Analog to the classical approach we then compute the distance as $ d = \norm{M * C}_F $.
+In order to allow the model to learn arbitrary metrics on graphs we use a message passing network to learn the entires of the cost matrix $C$. The network generates node embeddings that contain information about their local neighborhood. Instead of aggregating this information we compute pairwise distances between nodes of both graphs yielding a trainable equivalent to the upper left bock of the cost matrix. The corresponding values for insertion and deletion can be computed by taking a norm of the embeddings. Analog to the classical approach we then compute the distance as $ d = \langle M, C \rangle_\mathrm{F} $.
 
 For finding a matching there are multiple possibilities:
 \begin{itemize}
      \itemsep0em
      \item \textbf{Nearest Neighbor.} Taking the sum of the row-wise minima (and, for the sake of symmetry, the sum of the column-wise minima) yields what is known in computer vision as the \textbf{Chamfer Distance}. The matching runs in $O(N^2)$ and can be implemented using the $\argmax$ operator which can be backpropagated and is already implemented in modern deep learning frameworks.
      \item \textbf{Optimal Assignment.} Applying the Kuhn-Munkres algorithm results in an optimal assignment, $M_{ij} \in \{0,1\}$, in roughly $O(N^3)$ operations. However, this is a discrete algorithm, and therefore not differentiable.
-     \item \textbf{Optimal Transport.} The optimal transport problem is a continous relaxation of the optimal assignment, where $M_{ij} \in \left[ 0,1 \right]$. In this setting usually called the \textbf{Earth Mover Distance} it can be found in roughly $O(N^3 \log(N))$ operations.
-     \item \textbf{Regularized Optimal Transport.} \cite{sinkhorn2013} introduced an algorithm for solving an entropy regularized version of the optimal transport problem minimizing $\norm{M * C}_F + \frac{1}{\lambda} H(M)$. One simply computes the kernel matrix $ K = e^{ -\frac{C}{\lambda}}$ and applies Sinkhorn’s iterative matrix scaling. This is called the \textbf{Sinkhorn Distance} and can be computed extremely fast in practice with worst case running time of $O(N^2)$.
+     \item \textbf{Optimal Transport.} The optimal transport problem is a continous relaxation of the optimal assignment problem, where $M_{ij} \in \left[ 0,1 \right]$. In this setting usually called the \textbf{Earth Mover Distance} it can be found in roughly $O(N^3 \log(N))$ operations.
+     \item \textbf{Regularized Optimal Transport.} \cite{sinkhorn2013} introduced an algorithm for solving an entropy regularized version of the optimal transport problem minimizing $\langle M, C \rangle_\mathrm{F} + \frac{1}{\lambda} \mathrm{H}(M)$. One simply computes the kernel matrix $ K = e^{ -\frac{C}{\lambda}}$ and applies Sinkhorn’s iterative matrix scaling. This is called the \textbf{Sinkhorn Distance} and can be computed extremely fast in practice with worst case running time of $O(N^2)$.
 \end{itemize}
-While the chamfer distance can easily be backpropagated, the other three all minimize a convex function. In particular, $d(M,C)$ is convex in $C$ for every $M$, and the set of all possible matchings $M$ is compact. Therefore, we can apply Danskin's theorem (\citealp{danskin1967}) to find the derivative of the distance $d$ with respect to the cost matrix $C$. The theorem states that the derivative of a function of the form $f(x) = \max_{z \in Z} \phi(x,z)$ is the derivative at the optimum, which, in this case, is simply the optimal matching $M$. That means we can backpropagate any of the distances mentioned above, and learn in end-to-end fashion.
-% $f(x) = \max_{z \in Z} \phi(x,z)$
+
+While the chamfer distance can easily be backpropagated, we would prefer not to backpropagate through the iterative sinkhorn scaling or the cubic earth mover distance. It turns out that we can apply Danskin's theorem (\citealp{danskin1967}) to calculate analytic gradients for the optimization problems above.
+\begin{theorem}
+     If $\phi(x,z)$ is a continuous function of two arguments, $\phi: {\mathbb R}^n \times Z \rightarrow {\mathbb R}$ where $Z \subset {\mathbb R}^m$ is a compact set, and  $\phi(x,z)$ is convex in $x$ for every $z \in Z$.
+     Then the derivate of the function $f(x) = \max_{z \in Z} \phi(x,z)$ is:
+     \begin{equation}
+          D f(x) = \phi'(x,z^*)  \text{, where } z^*(x) = \argmax_{z \in Z}(\phi(x,z))
+     \end{equation}
+\end{theorem}
+Since $d(C, M)$ is affine, $-d(M,C)$ is also affine and convex, moreover, the set of all possible matchings $M$ is compact. Then, we can apply Danskin's theorem which yields that the derivate of $d(C) = \min \langle M, C \rangle_\mathrm{F}$ is the derivate of the frobenius inner product between $C$ and the optimal matching $M$, which we have computed already for the forward pass. And the final gradient is simply the matrix $M$ itself. Armed with the analytical gradient we can backpropagate any of the distances mentioned above, and learn in end-to-end fashion.
 
 Preliminary experiments indicated that the sinkhorn distance is not only similar fast to compute as the chamfer distance, but also yields better results than the other much slower methods. The regularization results into softer matchings compared to hard assignments, or the still very peaky matchings of the earth mover's distance. We believe these soft matchings propagate more gradient information to the message passing network allowing it to thoroughly adapt to the given distribution of graphs. Note that by adjusting the regularization parameter $\lambda$ we can control how soft the matchings are.
 
-% TODO
-% add metric learning loss
+The final objective function will then depend on the specific task. For learning the GED we simply use the mean squared error between prediction and ground truth values. More specialized objectives such as contrastive loss proposed by \cite{riba2018} for keyword spotting, or pairwise margin loss, or triplet loss proposed by \cite{li2019} for detecting fraudulent binaries can also be used with our model.
 
-% TODO
-In response to Fey et al. we also evaluated our method on graph matching. When we need the matching we cannot apply Danskin's theorem, but sinkhorn at around 50 iterations can still be backpropagated just fine. We wanted to see how using the kernel as we do (and not simply scaling the cost matrix) would also improve upon their results before/after consensus.
+In response to \cite{fey2020_update}, who used a very similar model for graph matching, we decided to evaluate our model on a graph matching task as well. In this case, where the matching matrix is used directly in the objective function we are not able to apply Danskin's theorem. Therefore, we do have to backpropagate through the sinkhorn iterations. However, we found that using 50 iterations is sufficient to get a good matching and can still be backpropagated reasonably fast.
 
 % Note wikipedia gives best running times as $O(mn + n^2 * \log(n))$ for Munkres
 % and $O(N \log(N)^2)$ for EMD

@@ -10,12 +10,12 @@ One key advantage of a neural network models is that they are not limited to lea
 
 Previously designed neural network models for graph distance estimation either reduce the entire graph to a single embedding vector creating a bottleneck if scaling to larger graphs (\citealp{bai2019}, \citealp{li2019}), or they implicitly use a crude and strict matching (\citealp{riba2018}).
 
-We propose a model that can learn arbitrary metrics on graphs using a novel cost matrix and explicit soft matchings, similar to that used by \cite{fey2020_update} in the context of graph matching. The main contributions of this report are:
+We propose a model that can learn arbitrary metrics on graphs by using a novel combination of a classical cost matrix and an explicit soft matching, similar to that used by \cite{fey2020_update} in the context of graph matching. The main contributions of this report are:
 \begin{itemize}
     \itemsep0em
-    \item The Graph Distance Network (GDN): A model derived from principle properties of metrics and classical algorithms for approximating the GED that uses a novel cost matrix soft matchings and fast backpropagation.
+    \item The Graph Distance Network (GDN): A model derived from principle properties of metrics and classical algorithms for approximating the GED that uses a classical cost matrix, a soft matching, and fast backpropagation.
     \item Experiments showing that our model improves upon state-of-the-art neural networks in predicting the GED.
-    \item Empirical evidence that our novel cost matrix and different application of the sinkhorn normalization improve upon state-of-the-art results of \cite{fey2020_update} in graph matching.
+    \item Empirical evidence that our classical cost matrix and different application of the sinkhorn normalization improve upon state-of-the-art results of \cite{fey2020_update} in graph matching.
 \end{itemize}
 
 
