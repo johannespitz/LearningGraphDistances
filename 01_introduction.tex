@@ -1,25 +1,23 @@
 \section{Introduction}
 
-% Graphs are intersting because you can represent anything as a graph.
-% Convolutional networks were extremly successful \cite{alexnet2012}.
-% Graph Convolution Network, Kipf and Welling \cite{kipf2017}.
-% Most research involving deep learning and graphs has focused on node and graph classification, but recently researchers have started applying these tools to the problem of graph distance estimation.
-
 Most conceivable datasets can be represented as a graph or a set of graphs. Not only “graph-like” datasets such as social networks or chemical molecules fall into this category, also, i.e. executable binaries can be represented by control flow graphs or pictures can be represented by the graph of keypoints. % write better in more sentences
+The broad applicability of graphs, and the success of deep learning across different tasks [vision, rl, nlp] has spurred on research in the application of neural networks to graphs. Graph Neural Networks (GNN), based on message passing between connected nodes, have already showed great success in predicting properties of nodes (\cite{kipf2017}) and of entire graphs (\citealp{gilmer2017}). However, only very recently researchers started applying GNN's to tasks such as graph distance or similarity estimation and graph matching.
 
-The broad range of applicability (of graphs), and the recent success of deep learning across different tasks [vision, rl, nlp] has spurred on the research in the application of deep neural networks to graphs. Borowing the idea of convolutional layers (\citealp{alexnet2012}) from conputer vision, \cite{kipf2017} introduced Graph Convolutional Networks (GCN) which can be implemented efficiently via message passing between connected nodes. Based on this message passing mechanism researchers have improved upon classical state-of-the-art methods in node classification and graph classification [find something in the pytorch-geometric list].
+\textbf{Graph Distance/Similarity.} A metric or a distance function defines a distance between paris of elements of a set, and similarity is the inverse of a distance. Finding similar graphs can be crucial for fingerprint matching (\citealp{fingerprint2005}), image indexing (\citealp{image_index2008}), or while working with chemical compounds (\citealp{chem2006}). Often the graph edit distance (GED) is used a proxy for finding similar graphs. Since computing the GED is NP-complete (\citealp{np_complete1998}) it usually needs to be approximated. There are multiple classical approximating algorithms, some of them can gurantuee to find a lower bound (\citealp{hungarian2009}) or upper bound (\citealp{hed2015}). However, due to their origin in optimization there is always a trade off between speed and accuracy, in which the faster approximations consider only very local node structures (\citealp{hungarian2009}). Recently, trained GNN's have been used to improve upon classical algorithms in terms of accuracy and inference times (\citealp{bai2019}). %\cite{bai2019} showed that trained GNN's can be used instead of classical algorithms to estimate the GED with much shorter inference times.
+One key advantage of a neural network models is that they are not limited to learning the GED, but they can also directly learn a given similarity function. Interesting examples include detecting fraudulent binaries (\citealp{li2019}), or graph-based keyword spotting ({\citealp{riba2018}).
 
-In this report we investigate the two problems:
+\textbf{Graph Matching.} A graph matching establishes a node correspondence between graphs, maximizing corresponding node and edge affinity (\citealp{wang2019}). Matching two graphs can be interesting for linking user accounts across different social network graphs (\citealp{zhang2016}), tracking keypoints of moving objects (\citealp{vento2012}), or aligning protein networks in bioinformatics (\citealp{singh2008}).
 
-\textbf{Graph Matching.} A graph matching establishes a node correspondence between graphs, maximising corrosponding node and edge affinity (\citealp{fey2020_update}; \citealp{wang2019}). For a detailed review of classical research into graph matching, recent neural network methods, and the applications of graph matching we refer the reader to \cite{fey2020_update}.
-% Interesting applications here refer to Fey later maybe right before that paragraph
+Previously designed neural network models for graph distance estimation either reduce the entire graph to a single embedding vector creating a bottleneck if scaling to larger graphs (\citealp{bai2019}, \citealp{li2019}), or they implicitly use a crude and strict matching (\citealp{riba2018}).
 
-\textbf{Graph Distance/Similarity.} Graph distance or grpah similarity estimation refers to the problem of learning a metric relating different graphs from a given distribution. Intersting applications include detecting fraudulent binaries by means of control flow graphs (\citealp{{li2019}}), graph-based keyword spotting {\citealp{riba2018}}, and in particular predicting the Graph Edit Distance.
-% but want to be able to learn any metric
+We propose a model that can learn arbitrary metrics on graphs using a novel cost matrix and explicit soft matchings, similar to that used by \cite{fey2020_update} in the context of graph matching. The main contributions of this report are:
+\begin{itemize}
+    \itemsep0em
+    \item The Graph Distance Network (GDN): A model derived from principle properties of metrics and classical algorithms for approximating the GED that uses a novel cost matrix soft matchings and fast backpropagation.
+    \item Experiments showing that our model improves upon state-of-the-art neural networks in predicting the GED.
+    \item Empirical evidence that our novel cost matrix and different application of the sinkhorn normalization improve upon state-of-the-art results of \cite{fey2020_update} in graph matching.
+\end{itemize}
 
-The GED is widly used in graph similarity search, i.e. with reduced graphs of chemical compounds (\citealp{chem2006}), in fingerprint matching (\citealp{fingerprint2005}), or image indexing (\citealp{image_index2008}). Since computing the GED is NP-complete \cite{np_complete1998} it usually needs to be approximated.
-
-Since computing the GED is NP-complete \cite{np_complete1998} it usually needs to be approximated. There are multiple classical algorithms to approximate the GED, some of them can gurantuee to find a lower bound (\cite{hungarian2009}) or upper bound (\citealp{hed2015}). However, due to their origin in optimization there is always a trade off between speed and accuracy, in which the faster approximations consider only very local node structures (\citealp{riba2018}).
 
 % Faced with the great significance yet huge difficulty of computing the exact GED between two graphs,
 % a flurry of approximate algorithms have been proposed with a trade-off between speed and accuracy.
@@ -29,14 +27,7 @@ Since computing the GED is NP-complete \cite{np_complete1998} it usually needs t
 % VJ (Fankhauser, Riesen, and Bunke 2011), A*-Beamsearch
 % (Beam) (Neuhaus, Riesen, and Bunke 2006), etc
 
-Previoius attemps of using neural networks for this have the short come that they cannot scale to larger graphs due to bottleneks (embedding vectors), or they (Riba) don't use Danskin.
 
-We present a fast method to one using the other.
 
-Main contributions:
-\begin{itemize}
-    \itemsep0em
-    \item Propose method for graph distance learing that scales to larger graphs. \\ (With Nystrom/Multiscale $\rightarrow$ First sub $n^2$ that scales to larger graphs).
-    \item Experimentaly show that it outperforms other methods on task of Graph Edit Distance estimation.
-    \item Show that our application of sinkhorn has advantages over previous work.
-\end{itemize}
+% TODO
+% For a detailed review of classical research into graph matching, recent neural network methods, and the applications of graph matching we refer the reader to \cite{fey2020_update}.
