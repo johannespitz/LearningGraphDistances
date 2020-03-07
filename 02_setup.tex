@@ -61,30 +61,28 @@ The final distance $d$ is then computed and trained via the mean squared error b
      \end{gathered}
 \end{equation}
 
+Implementation. Our GNN is implemented with PyTorch-geometric (\citealp{pytorchgeometric}) and can process sparse mini-batches with parallel GPU acceleration. We have two implementations for the matching. The first version pads matrices to form batches and can be used in cases where all graphs have similar number of nodes. The second version uses sparse matrices in COOrdinate format, which less efficient with evenly sized graphs but can be crucial for parallelizing workloads with a few large graphs.
 
 \subsection{Experiment 2}
 
-\cite{fey2020_update} have recently shown that a very similar model to ours can be used to learn graph matchings. The main difference to our model is that they normalize the cost matrix $C$ instead of kernel matrix $e^{-\frac{C}{\lambda}}$. However, they report bad gradients with sinkhorn normalization and therefore use row-wise sofmax instead.
+\cite{fey2020_update} have recently applied a very similar model to ours to learn graph matching. They also use a GNN to generate node embeddings and compute a cost matrix of pairwise distances. Their main contribution is the following consensus method. After normalizing the cost matrix, they use this matching to map randomly generated features of one graph to the other. Then they apply a different GNN to the graphs with new features and repeat the process multiple times. The loss is the negative log likelihood of the soft matching given some ground truth matching (following \citealp{wang2019}). And the final performance is measured by how often the row-wise maximum in the soft matching yields the correct match (Hits@1).
 
+To align our model as much as possible with their work we use the same SplineCNN (\citealp{spline2018}) with the same embedding size and number of layers to generate node embeddings. We use $p=2$ for our norm, and the no-BP variant of the cost matrix. For numeric stabilization we scaled the kernel matrix by the sum of all entires divided by the number of entries: $\text{reg} = \frac{\norm{C_l}_1}{\max(n1,n2)^2}$. We also implemented the consensus method for a more detailed comparison.
 
-They only use the left upper part of the cost matrix (not a problem because aim for hits@1)
-and they use the dot product of node embeddings instead of a p-norm or MLP.
+The main difference between our models is that \cite{fey2020_update} normalize the cost matrix $C$ instead of kernel matrix $e^{-\frac{C}{\lambda}}$. Consequently, they report bad gradients with sinkhorn normalization and use row-wise sofmax instead. For their cost matrix they only use the pairwise distances between nodes without padding with norms, which should not be a problem for tasks where each node in the first graph has a match in the second graph, but could be problematic in other settings. Below we have a complete list of the differences between our models:
 
-We use p=2, and no-BP, spline-CNN, scale the kernel matrix by $sum(C) / max(n1,n2)^2$
-Now we need to backprop through the sinkhorn iteratons!
+\begin{alignat*}{3}
+     & && \quad \text{\cite{fey2020_update}} && \quad \text{Ours} \\
+     &C_0 &&= h_i \cdot h_j &&= \norm{h_i - h_j}_2 \qquad \text{(fill with norms)} \\
+     &C_l &&= C_{l - 1} + \text{MLP}(h_i - h_j) &&= \beta_l C_0 + (1 - \beta_l) \text{MLP}(h_i - h_j) \qquad \text{(keep old norms scaled by} \alpha^2 \text{)} \\
+     &M_l &&= \text{softmax}(C_l) &&= \text{sinkhorn}(e^{-\frac{C_l * \text{reg}}{\lambda}}) \\
+\end{alignat*}
 
-We also implemented a consensus step based on their work. We use instead of
-\\
-$C_0 = h_s \cdot h_t$\\
-$C_0 = \norm{h_s - h_t}_2$ fill with norms\\
-$C_l = C_{l - 1} + \text{MLP}(h_s - h_t)$\\
-$C_l = \beta_l C_0 + (1 - \beta_l) \text{MLP}(h_s - h_t)$ keep old norms scaled by $\alpha^2$\\
-$M_l = \text{softmax}(C_l)$ \\
-$M_l = \text{sinkhorn}(e^{-\frac{C_l * \text{reg}}{\lambda}}) \quad \text{reg} = \frac{\norm{C_l}_1}{\max(n1,n2)^2}$\\
-
-
-Therefore we set up a second experiment to show, that applying the sinkhorn normalization to the kernel matrix instead of the
-
-
-
-Implementation. We can run everything in batches, either with padded matricies (if all graphs are close to max-nodes) or in COO sparse, allowing us to batch larger graphs together with smaller ones.
+% We also implemented a consensus step based on their work. We use instead of
+% \\
+% $C_0 = h_s \cdot h_t$\\
+% $C_0 = \norm{h_s - h_t}_2$ fill with norms\\
+% $C_l = C_{l - 1} + \text{MLP}(h_s - h_t)$\\
+% $C_l = \beta_l C_0 + (1 - \beta_l) \text{MLP}(h_s - h_t)$ keep old norms scaled by $\alpha^2$\\
+% $M_l = \text{softmax}(C_l)$ \\
+% $M_l = \text{sinkhorn}(e^{-\frac{C_l * \text{reg}}{\lambda}}) \quad \text{reg} = \frac{\norm{C_l}_1}{\max(n1,n2)^2}$\\

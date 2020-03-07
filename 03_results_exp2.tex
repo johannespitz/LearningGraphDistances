@@ -1,8 +1,13 @@
 \subsection{Experiment 2}
 
-We want to show that using the kernel with the adaptable $\lambda$ sinkhorn normalization produces good gradients and can improve upon their work.
+The goal of our second experiment is to show that it is advantageous to apply the sinkhorn normalization to the kernel matrix instead of the cost matrix directly. We decided to run the keypoint matching experiment on the PASCALVOC  dataset (Everingham et al., 2010) with Berkeley annotations (Bourdev \& Malik, 2009) of \cite{fey2020_update}. We relied on large parts or their implementation and did not modify any of the hyperparameters. After choosing the no-BP cost matrix variant because of the problem setting, and the p=2 norm because of better results, we only had the learning rate and the the regularization constant to tune.
 
-Keypoint matching vs. Fey
+
+% We want to show that using the kernel with the adaptable $\lambda$ sinkhorn normalization produces good gradients and can improve upon their work.
+
+% Keypoint matching vs. Fey
+
+% Therefore we set up a second experiment to show, that applying the sinkhorn normalization to the kernel matrix instead of the
 
 
 
