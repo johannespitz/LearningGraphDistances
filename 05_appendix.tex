@@ -1,7 +1,10 @@
 \appendix
 \appendixpage
 
+In this report I summarize the work I did during my guided research. The main part of the report focuses on findings that are relevant to a potential paper submission, but here in the appendix I will add some information about the datasets we used, and some we did not use (for completeness).
 
+
+\section{Graph Edit Distance Datasets}
 \begin{table}[htbp]
     \addtolength{\tabcolsep}{-1pt}
     \fontsize{9pt}{10.25pt}\selectfont
@@ -22,18 +25,14 @@
 
 Note \#Train and \#Val/Test are the number of graphs. We train and validate/test on all possible pairs of graphs, except the pairs where a graph is paired with itself.
 
-Note: For a real paper the related work section would look different of course
-Probably it would then be possible to move that section before the derivation, but it is there, because there is some background information given in the derivation that is required for such a detailed description of the related models.
-since this is a report and I spent a significant amout of time working with these baselines, I think the level of detail is approriate.
-
-
-In this report I summarize the work I did during my guided research. The main part of the report is focuses on the findings that are relevant to a potential paper submission, while in the appendix I will write more about the process and some of the less important work I have done.
-
-The main part of the report starts with an analysis of related work in the area of graph distance learning and graph matching. Then \dots
-
-
-Search for datasets
-
 \section{Yeast Dataset}
 
+The Yeast Dataset (\href{https://www3.nd.edu/~cone/MAGNA++/}{link}), used by \cite{yeast2019}, contains the protein-protein interaction (PPI) network of yeast and noise versions thereof. The base network contains 1,004 proteins and 4,920 high-confidence interactions. The noisy versions contain additional low-confidence interactions.
+
+The first obstacle with this dataset would have been the generation of train/val/test splits.  Moreover, we could not have compared our results directly with \cite{yeast2019} because they learn unsupervised. The second obstacle is that the dataset contains no node or edge features. That is mostly a problem because GNN's are particularly good at using node, and also edge features. Therefore, it is questionable if a  model based on GNN's would perform impressive enough. In the end we decided not to use this dataset, also because we discovered the paper by \cite{fey2020_update} who use plenty of graph matching datasets that fit much better to our model.
+
 \section{Control Flow Dataset}
+
+Code to generate the splits: \href{https://github.com/johannespitz/functionsimsearch/tree/master}{github}
+
+At the time of writing the datasets can be found at '/nfs/students/'

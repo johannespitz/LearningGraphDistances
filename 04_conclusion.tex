@@ -2,10 +2,12 @@
 
 % cost matrix
 
-We propose to use explicit matching between pairs of graphs to allow accurate and scalable estimation of arbitrary metrics on graphs. Our model has the same theoretical complexity, $O(N_1 N_2)$, as previous neural network methods designed for similar tasks. In practice the model runs quickly because our implementation can efficiently handle large mini-batches of arbitrary sized graphs making it well suited for modern GPU setups. We showed empirically that our model improves upon state-of-the art methods in predicting the ubiquitous graph edit distance.
+We proposed to use a cost matrix, motived by bipartite graph matching, and an explicit soft matching between nodes to allow accurate and scalable estimation of arbitrary metrics on graphs. Our model has the same theoretical complexity, $O(N_1 N_2)$, as previous neural network methods designed for this tasks. In practice the model runs quickly because our implementation can efficiently handle large mini-batches of arbitrary sized graphs making it well suited for modern GPU setups. We showed empirically that the model improves upon state-of-the art methods in predicting the ubiquitous graph edit distance, which is one use case but more importantly consolidates our claim that the network can learn arbitrary distances on graphs.
 
 % Using matching for distance computation has great potential. Can compute matching fast and still be fully differentiable. Works great on GED.
 % no reason why we couldn't apply it to other distances
 
 
-We also showed that the model can be applied to graph matching. In close relation to the model of \cite{fey2020_update} we showed that applying the sinkhorn normalization to the kernel matrix instead of the cost matrix can improve upon softmax workaround, and should work much better if want to learn sparse matchings, where wrong matching might be punished much harder than hits@1 does. %TODO
+Closely following the setup of \cite{fey2020_update}, we applied our  model to graph matching. In particular, motivated by the sinkhorn distance, we propose to apply sinkhorn scaling to the kernel of the cost matrix. We showed empirically that with little tuning of the regularization constant this model improves upon the best results of \cite{fey2020_update} without the consensus method.
+
+% mention that full-BP can be applied to sparse matching

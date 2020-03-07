@@ -1,16 +1,8 @@
 \subsection{Experiment 2}
 
-The goal of our second experiment is to show that it is advantageous to apply the sinkhorn normalization to the kernel matrix instead of the cost matrix directly. We decided to run the keypoint matching experiment on the PASCALVOC  dataset (Everingham et al., 2010) with Berkeley annotations (Bourdev \& Malik, 2009) of \cite{fey2020_update}. We relied on large parts or their implementation and did not modify any of the hyperparameters. After choosing the no-BP cost matrix variant because of the problem setting, and the p=2 norm because of better results, we only had the learning rate and the the regularization constant to tune.
+The goal of our second experiment is to show that it is advantageous to apply the sinkhorn normalization to the kernel matrix instead of the cost matrix directly. We decided to run the keypoint matching experiment of \cite{fey2020_update} on the PASCALVOC  dataset \cite{pascal2010} with Berkeley annotations \cite{annotations2009}. We relied on large parts or their implementation and did not modify any of the hyperparameters. We fixed the norm to be $p=2$, to avoid using additional parameters over to the cosine distance, and choose the no-BP cost matrix because the graphs are built such that every node in the first (source) graph has a match in the second (target) graph. Therefore, the network would only learn to predict 0's for the additional values. This left us with only the learning rate and the regularization constant $\lambda$ to tune.
 
-
-% We want to show that using the kernel with the adaptable $\lambda$ sinkhorn normalization produces good gradients and can improve upon their work.
-
-% Keypoint matching vs. Fey
-
-% Therefore we set up a second experiment to show, that applying the sinkhorn normalization to the kernel matrix instead of the
-
-
-
+In Table \ref{tab:ex2} we report results on the test set of the model with the best validation performance across 18 runs (3 trials, 2 learning rates, and 3 regularization constants), and compare these to the numbers reported by \cite{fey2020_update}.
 
 \begin{table}[ht]
     \centering
@@ -28,7 +20,10 @@ The goal of our second experiment is to show that it is advantageous to apply th
         \hline
     \end{tabular}}
     \caption{Hits@1 (\%) on the PASCALVOC dataset with Berkeley keypoint annotations}
+    \label{tab:ex2}
 \end{table}
+
+Table \ref{tab:ex2} shows that the use of the kernel matrix and the inherent ability to tune the regularization constant clearly improves the base model without consensus. The 3 percent points gain constitute over half of the gains made by the original consensus method. Unfortunately, applying the consensus method to our model was not successful. In fact, by adding our consensus steps the performance drops slightly. We believe that the consensus method should be orthogonal to the gains due to the kernel matrix. However, so far we were not able to improve upon the poor performance even after multiple tweaks to the cost matrix generation.
 
 
 % 0.4016 0.5957 0.5005 0.6497 0.8784 0.8669 0.8227 0.6962 0.3740 0.5895 0.9310 0.5673 0.7313 0.5288 0.5853 0.9634 0.6207 0.8955 0.9337 0.8725
