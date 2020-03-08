@@ -4,8 +4,8 @@
 % Aggregate
 % Set up cost matrix (bp vs. normal, scale with $\alpha$).
 % norms
-% Compoute explicit matching with sinkhorn (use cost matrix as kernel, can tune $\lambda$).
-% Use optimal matching for backprop.
+% Compute explicit matching with sinkhorn (use cost matrix as kernel, can tune $\lambda$).
+% Use optimal matching for backpropagation.
 % Multiply matching with cost matrix.
 
 \subsection{Experiment 1}
@@ -50,7 +50,7 @@ As for the matrix $C$ itself we tested two variants. The first one we call BP-Di
           \right]
      \in \mathbb{R}^{(N_1 + N_2) \times (N_1 + N_2)}
 \end{equation}
-This does lead to different results after sinkhorn normalization due to the entropy regularization, but the network can easily adapt by increasing $\norm{\alpha}$. Therefore this modification should not effect our trainable model. The second variant of the cost matrix is the smallest square sub-matrix of the one above that contains all pairwise distances, such that \mbox{$C_\text{no-BP} \in \mathbb{R}^{\max({N_1, N_2}) \times \max({N_1, N_2})}$}.
+This does lead to different results after sinkhorn normalization due to the entropy regularization, but the network can easily adapt by increasing $\norm{\alpha}$. Therefore, this modification should not affect our trainable model. The second variant of the cost matrix is the smallest square sub-matrix of the one above that contains all pairwise distances, such that \mbox{$C_\text{no-BP} \in \mathbb{R}^{\max({N_1, N_2}) \times \max({N_1, N_2})}$}.
 
 The final distance $d$ is then computed and trained via the mean squared error between target distance and prediction:
 \begin{equation}
@@ -67,7 +67,7 @@ Implementation. Our GNN is implemented with PyTorch-geometric (\citealp{pytorchg
 
 \cite{fey2020_update} have recently applied a very similar model to ours to learn graph matching. They also use a GNN to generate node embeddings and compute a cost matrix of pairwise distances. Their main contribution is the following consensus method. After normalizing the cost matrix, they use this matching to map randomly generated features of one graph to the other. Then they apply a different GNN to the graphs with new features and repeat the process multiple times. The loss is the negative log likelihood of the soft matching given some ground truth matching (following \citealp{wang2019}). And the final performance is measured by how often the row-wise maximum in the soft matching yields the correct match (Hits@1).
 
-To align our model as much as possible with their work we use the same SplineCNN (\citealp{spline2018}) with the same embedding size and number of layers to generate node embeddings. We use $p=2$ for our norm, and the no-BP variant of the cost matrix. For numeric stabilization we scaled the kernel matrix by the sum of all entires divided by the number of entries: $\text{reg} = \frac{\norm{C_l}_1}{\max(n1,n2)^2}$. We also implemented the consensus method for a more detailed comparison.
+To align our model as much as possible with their work we use the same SplineCNN (\citealp{spline2018}) with the same embedding size and number of layers to generate node embeddings. We use $p=2$ for our norm, and the no-BP variant of the cost matrix. For numeric stabilization we scaled the kernel matrix by the sum of all entries divided by the number of entries: $\text{reg} = \frac{\norm{C_l}_1}{\max(n1,n2)^2}$. We also implemented the consensus method for a more detailed comparison.
 
 The main difference between our models is that \cite{fey2020_update} normalize the cost matrix $C$ instead of kernel matrix $e^{-\frac{C}{\lambda}}$. Consequently, they report bad gradients with sinkhorn normalization and use row-wise sofmax instead. For their cost matrix they only use the pairwise distances between nodes without padding with norms, which should not be a problem for tasks where each node in the first graph has a match in the second graph, but could be problematic in other settings. Below we have a complete list of the differences between our models:
 
