@@ -1,14 +1,14 @@
 \subsection{Experiment 1}
 
 % Dataset
-For our first experiment we use synthetic preferential attachment graphs (\citealp{pref_att2002}) and real world chemical molecules of the aids dataset (\href{https://wiki.nci.nih.gov/display/NCIDTPdata/AIDS+Antiviral+Screen+Data}{link}). Both datasets have discrete node and edge features, and graphs are limited to at most 30 nodes. We provide some basic dataset statists in the appendix (Table \ref{tab:ex1-data}).
+For our first experiment we use synthetic preferential attachment graphs (\citealp{pref_att2002}) and real world chemical molecules of the aids dataset\footnote{\url{https://wiki.nci.nih.gov/display/NCIDTPdata/AIDS+Antiviral+Screen+Data}}. Both datasets have discrete node and edge features, and graphs are limited to at most 30 nodes. We provide some basic dataset statists in the appendix (Table \ref{tab:ex1-data}).
 
 % Baseline Setup
-We compare our results to the implementations of \cite{riba2018}, \cite{bai2019}, and \cite{li2019} in Table \ref{tab:ex1-baselines}. All methods are described in the Related Work Section. We train for 500 epochs, and report the best error on the validation set and the corresponding test error. We ran 3 trials of every setting and searched over cross product of 2 different batch sizes (depending on the implementation), 32 and 64 dimensional node embeddings, 1 and 3 layers of message passing, 4 learning rates, and 4 degrees of regularization. Implementation details can be found in the respective gitlab repositories (\href{https://gitlab.lrz.de/ge98beq/siamese_ged}{Riba}, \href{https://gitlab.lrz.de/ge98beq/simgnn}{Bai}, \href{https://gitlab.lrz.de/ge98beq/gmn/tree/gr_report}{Li})
+We compare our results to the implementations of \cite{riba2018}, \cite{bai2019}, and \cite{li2019} in Table \ref{tab:ex1-baselines}. All methods are described in the Related Work Section. We train for 500 epochs, and report the best error on the validation set and the corresponding test error. We ran 3 trials of every setting and searched over cross product of 2 different batch sizes (depending on the implementation), 32 and 64 dimensional node embeddings, 1 and 3 layers of message passing, 4 learning rates, and 4 degrees of regularization. Implementation details can be found in the respective gitlab repositories\footnote{Riba: \url{https://gitlab.lrz.de/ge98beq/siamese_ged}, Bai \url{https://gitlab.lrz.de/ge98beq/simgnn}, Li \url{https://gitlab.lrz.de/ge98beq/gmn/tree/gr_report}}.
 % Adam/SGD
 
 % GDN Setup
-For our model, the graph distance network (GDN), we fixed the batch size to 1024, the embedding size to 32, and the number of layer to 3, and added 3 choices for the sinkhorn regularization constant $\lambda$. Moreover, we include an ablation study over the choice of the cost matrix and different norms in Table \ref{tab:ex1-ablation}.
+For our model, the graph distance network (GDN), we fixed the batch size to 1024, the embedding size to 32, and the number of layers to 3, and added 3 choices for the sinkhorn regularization constant $\lambda$. Moreover, we include an ablation study over the choice of the cost matrix and different norms in Table \ref{tab:ex1-ablation}.
 
 \begin{table}[htbp]
     \addtolength{\tabcolsep}{-1pt}

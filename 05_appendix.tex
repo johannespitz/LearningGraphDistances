@@ -27,12 +27,12 @@ Note \#Train and \#Val/Test are the number of graphs. We train and validate/test
 
 \section{Yeast Dataset}
 
-The Yeast Dataset (\href{https://www3.nd.edu/~cone/MAGNA++/}{link}), used by \cite{yeast2019}, contains the protein-protein interaction (PPI) network of yeast and noise versions thereof. The base network contains 1,004 proteins and 4,920 high-confidence interactions. The noisy versions contain additional low-confidence interactions.
+The Yeast Dataset (\url{https://www3.nd.edu/~cone/MAGNA++/}), used by \cite{yeast2019}, contains the protein-protein interaction (PPI) network of yeast and noise versions thereof. The base network contains 1,004 proteins and 4,920 high-confidence interactions. The noisy versions contain additional low-confidence interactions.
 
 The first obstacle with this dataset would have been the generation of train/val/test splits.  Moreover, we could not have compared our results directly with \cite{yeast2019} because they learn unsupervised. The second obstacle is that the dataset contains no node or edge features. That is mostly a problem because GNN's are particularly good at using node, and also edge features. Therefore, it is questionable if a  model based on GNN's would perform impressive enough. In the end we decided not to use this dataset, also because we discovered the paper by \cite{fey2020_update} who use plenty of graph matching datasets that fit much better to our model.
 
 \section{Control Flow Dataset}
 
-Code to generate the splits: \href{https://github.com/johannespitz/functionsimsearch/tree/master}{github}
+Code to generate the splits: \url{https://github.com/johannespitz/functionsimsearch/tree/master}
 
 At the time of writing the datasets can be found at '/nfs/students/'
