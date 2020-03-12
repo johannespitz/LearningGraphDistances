@@ -29,12 +29,81 @@ Note \#Train and \#Val/Test are the number of graphs. We train and validate/test
 
 The Yeast Dataset (\url{https://www3.nd.edu/~cone/MAGNA++/}), used by \cite{yeast2019}, contains the protein-protein interaction (PPI) network of yeast and noise versions thereof. The base network contains 1,004 proteins and 4,920 high-confidence interactions. The noisy versions contain additional low-confidence interactions.
 
-The first obstacle with this dataset would have been the generation of train/val/test splits.  Moreover, we could not have compared our results directly with \cite{yeast2019} because they learn unsupervised. The second obstacle is that the dataset contains no node or edge features. That is mostly a problem because GNN's are particularly good at using node, and also edge features. Therefore, it is questionable if a  model based on GNN's would perform impressive enough. In the end we decided not to use this dataset, also because we discovered the paper by \cite{fey2020_update} who use plenty of graph matching datasets that fit much better to our model.
+The first obstacle with this dataset would have been the generation of train/val/test splits.  Moreover, we could not have compared our results directly with \cite{yeast2019} because they learn unsupervised. The second obstacle is that the dataset contains no node or edge features. That is mostly a problem because GNN's are particularly good at using node, and also edge features. Therefore, it is questionable if a  model based on GNN's would perform impressive enough. In the end we decided not to use this dataset, also because we discovered the paper by \cite{fey2020_update} who use plenty of graph matching datasets that fit our model much better.
 
 \section{Control Flow Dataset}\
 
-\cite{li2019} used control flow graphs to evaluate their model. They used metric learning (margin-loss with pairs, and triplets) to recognize a function compiled from different compliers as similar, and different functions as not similar. They didn't share they dataset of FFmpeg function with us, but referred us to a github repository, which I then forked (\url{https://github.com/johannespitz/functionsimsearch/tree/master}) and used to generate the UnRAR datasets, which (at the time of writing) can be found at '/nfs/students/pitz/cfgs' on the file server. To generate the graphcollection's I used the notebook 'cfgs.ipynb' in the graph-distance repository. Note: use the .pickle version because it is much faster than .npz.
+\cite{li2019} used control flow graphs to evaluate their model. They used metric learning (margin-loss with pairs, and triplets) to recognize a function compiled from different compliers as similar, and different functions as not similar. They didn't share their dataset of FFmpeg functions with us, but referred us to a github repository, which I then forked (\url{https://github.com/johannespitz/functionsimsearch/tree/master}) and used to generate the UnRAR datasets, which (at the time of writing) can be found at '/nfs/students/pitz/cfgs' on the file server. To generate the graphcollection's I used the notebook 'cfgs.ipynb' in the graph-distance repository. Note: use the .pickle version because it is much faster than .npz.
 
 Currently we have a few different options for train/val/test splits. The simplest split is to use train\_all/val/test, which is an 80/10/10 split in terms of functions (not graphs). The attraction list contains all pairs of graphs that are from the same function, and the repulsion list contains as many negative samples. The train\_all split is then further split in: Option1, train\_across/val\_across/test\_acorss. Here out of the n graphs of any function we pick one to be the test graph, and all pairs between it and the remaining n-1 graphs are placed in the attraction list. Of the n-1 we then draw a validation graph and again all pairs between it and the remaining n-2 graphs are placed in the attraction list. The attraction list of the train\_across split contains then all possible pairs of the remaining n-2 graphs. Option2, train12/val1/val2/test1/test2. Here we split train\_all as chunk/val2/test2 (70/15/15) in terms of graphs (not functions), while ensuring that at least one graph of each function is contained the chunk. We then generate all positive pairs, but for the chunk we split those again into train12/val1/test1 (80/10/10) ensuring that every graph is in train12 at least once. All repulsion list for both options contain as many negative samples as the corresponding attraction list. Triplets are only available with the simple  train\_all/val/test (80/10/10) split.
 
 Our model can be trained with pairs or triplets as it is. I did not include any results with the dataset in this report because the baselines cannot without putting in additional work.
+
+
+% \begin{equation}
+%     \begin{gathered}
+%          h_i^\text{final} = [h_i^L ; \dots ; h_i^1] \in \mathbb{R}^{d_\text{final}}\\
+%          C_{i,j} = \norm{h_i^\text{final} - h_j^\text{final}} \\
+%          C_{i, \epsilon} = \norm{ \alpha h_i^\text{final}} \quad
+%          C_{\epsilon, j} = \norm{ \alpha h_j^\text{final}} \\ i \in \{1 \dots N_1\}, j \in \{1 \dots N_2\}
+%     \end{gathered}
+% \end{equation}
+
+
+% \begin{equation}
+% C_\text{no-BP} \in \mathbb{R}^{\max({N_1, N_2}) \times \max({N_1, N_2})}
+% \end{equation}
+
+% \begin{equation}
+%     \frac{\partial d}{\partial c_{i,j}} = m^*_{i,j}
+% \end{equation}
+
+
+% \begin{equation}
+%     d(C) = \min_{M} \langle M, C \rangle_\mathrm{F} + \lambda \text{H}(M) \quad \text{s.t. } \sum_i m_{i,j} = \sum_j m_{i,j} = 1
+% \end{equation}
+
+% \begin{equation}
+%     M^* = \text{Sinkhorn}(e^{-\frac{C}{\lambda}})
+% \end{equation}
+
+
+
+
+% \begin{table}[htbp]
+%     \addtolength{\tabcolsep}{-1pt}
+%     \fontsize{9pt}{10.25pt}\selectfont
+%     \centering
+%     \renewcommand{\arraystretch}{1.2}
+%     \begin{tabular}{|l|c|c|c|c|}
+%         \hline
+%         \multirow{2}{*}{} & \multicolumn{2}{c|}{Pref-Attachment} & \multicolumn{2}{c|}{AIDS} \\ \hhline{|~|-|-|-|-|}
+%         & Val & Test & Val & Test \\ \hhline{|=|=|=|=|=|}
+%         Riba et al. (2018) & $12.2 \pm 0.2$ & $12.1 \pm 0.6$ & $15.5 \pm 0.3$  & $15.6 \pm 0.3$ \\ \hline
+%         Bai et al. (2019) & $7.7 \pm 1.0$ & $9.6 \pm 2.5$ & $4.2 \pm 0.3$ & $8.7 \pm 0.1$ \\ \hline
+%         Li et al. (2019) & $5.5 \pm 0.1 $ & $7.8 \pm 0.3$ & $10.6 \pm 0.3$ & $11.7 \pm 0.9$ \\ \hline
+%         GDN & $4.2 \pm 0.1$ & $\boldsymbol{4.5 \pm 0.2}$ & $3.3 \pm 0.04$ & $\boldsymbol{6.2 \pm 1.0}$ \\ \hline
+%     \end{tabular}
+%     \caption{RMSE to ground truth GED with standard deviation across 3 runs.}
+%     \label{tab:ex1-baselines}
+% \end{table}
+
+
+% \begin{table}[ht]
+%     \centering
+%    \begin{tabular}{|c|c|c|}
+%         \hline
+%         \textbf{Method}&\textbf{Consensus} &\textbf{Mean} \\
+%         \hline
+%         DGC & L=0 &67.3\\
+%         \hline
+%         GDN & L=0&70.5\\
+%         \hline
+%         DGC & L=10&72.8\\
+%         \hline
+%         GDN & L=10&70.0\\
+%         \hline
+%     \end{tabular}
+%     \caption{Hits@1 (\%) on PASCALVOC}
+%     \label{tab:ex2}
+% \end{table}
