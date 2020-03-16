@@ -80,7 +80,7 @@ Preliminary experiments indicated that the Sinkhorn distance is not only similar
 
 The final objective function will then depend on the specific task. For learning the GED we simply use the mean squared error between prediction and ground truth values. More specialized objectives such as the contrastive loss proposed by \cite{riba2018} for keyword spotting, or pairwise margin loss, or triplet loss proposed by \cite{li2019} for detecting fraudulent binaries can also be used with our model.
 
-In response to \cite{fey2020_update}, who used a very similar model for graph matching, we decided to evaluate our model on a graph matching task as well. In this case, where the matching matrix is used directly in the objective function we are not able to apply Danskin's theorem. Therefore, we do have to backpropagate through the Sinkhorn iterations. However, we found that using 50 iterations is sufficient to get a good matching and can still be backpropagated through reasonably fast.
+In response to \cite{fey2020_update}, who used a similar model for graph matching, we decided to evaluate our model on a graph matching task as well. In this case, where the matching matrix is used directly in the objective function, we are not able to apply Danskin's theorem. Therefore, we do have to backpropagate through the Sinkhorn iterations. However, we found that using 50 iterations is sufficient to get a good matching and can still be backpropagated through reasonably fast.
 
 % Note wikipedia gives best running times as $O(mn + n^2 * \log(n))$ for Munkres
 % and $O(N \log(N)^2)$ for EMD
