@@ -53,14 +53,14 @@
 \begin{abstract}
 
 
-Computing meaningful distances between graphs is often difficult due to the combinatorial explosion of possible transformations on graphs. Recently, researchers started using graph neural networks in an attempt to replace classical search algorithms with learning methods. However, these learning methods often rely on fixed size graph embeddings, which prevent them from scaling to larger graphs. We propose to use soft matchings between nodes to overcome this problem. Our novel combination of a classical cost matrix, motivated by bipartite graph matching algorithms, and the modern sinkhorn distance shows state-of-the-art results for predicting the ubiquitous graph edit distance. Additionally, we report strong empirical results at graph matching with the same model. Our implementation\footnote{\url{https://gitlab.lrz.de/gdn/graph-distance}} efficiently handles sparse inputs and large real-world graphs.
+Computing meaningful distances between graphs is often difficult due to the combinatorial explosion of possible transformations on graphs. Recently, researchers started using graph neural networks in an attempt to replace classical search algorithms with learning methods. However, these learning methods often rely on fixed size graph embeddings, which prevent them from scaling to larger graphs. We propose to use soft matchings between nodes to overcome this problem. Our novel combination of a classical cost matrix, motivated by bipartite graph matching algorithms, and the modern Sinkhorn distance shows state-of-the-art results for predicting the ubiquitous graph edit distance. Additionally, we report strong empirical results at graph matching with the same model. Our implementation\footnote{\url{https://gitlab.lrz.de/gdn/graph-distance}} efficiently handles sparse inputs and large real-world graphs.
 
 % of pairwise distances between nodes in the form
 
 % However, these learning methods often neglect the
 
 % Graph neural networks suffer bottleneck problems
-% We propose to use soft matching between nodes, using a cost matrix, motivated by bipartite graph matching and sinkhorn distance.
+% We propose to use soft matching between nodes, using a cost matrix, motivated by bipartite graph matching and Sinkhorn distance.
 % We show empirically that our model improves upon state-of-the-art methods on the task of predicting the graph edit distance
 % and demonstrate that it can be used for graph matching.
 % Our sparsity-aware implementation\footnote{} scales well to large real-world graphs.
@@ -70,6 +70,15 @@ Computing meaningful distances between graphs is often difficult due to the comb
 \end{abstract}
 
 \input{01_introduction.tex}
+
+\section{Background}
+
+Let $\mathcal{G}$ be a set of graphs, where each graph $G = \{V, E\} \in \mathcal{G}$ with nodes $V$ and edges $E$ is drawn from a common distribution. The nodes and edges may have arbitrary features. Usually we expect the number of edges $\vert E \vert$ to be much smaller than the number of all possible edges, i.e. $N^2 = \vert V \vert ^2$. Possible distributions include chemical molecules, control flow graphs, or synthetic preferential attachment graphs (\citealp{pref_att2002}).
+
+Graph neural networks are based on message passing:
+message
+propagate
+update.
 
 \input{01c_related_work.tex}
 
@@ -88,8 +97,8 @@ Computing meaningful distances between graphs is often difficult due to the comb
 \bibliographystyle{plainnat}
 \bibliography{egbib}
 
-% cite    -> Name (year)
-% citealp -> Name, year
+% \cite    -> Name (year)
+% \citealp -> Name, year
 
 \newpage
 
