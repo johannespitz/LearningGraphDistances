@@ -6,15 +6,3 @@
 %     Results
 
 \input{03_results_exp1.tex}
-
-
-
-\section{Graph Matching}
-
-As described in \ref{section:related_work} Related Work, \cite{fey2020_update} have recently applied a similar model to ours to predict soft matchings between nodes. They train on the negative log likelihood between the soft matching and some ground truth matching (following \citealp{wang2019}). The final performance is measured by how often the row-wise maximum in the soft matching yields the correct match (Hits@1).
-
-With the goal to show that it is advantageous to apply the Sinkhorn normalization to the kernel matrix instead of the cost matrix directly, we decided to also run the keypoint matching experiment of \cite{fey2020_update} on the PASCALVOC  dataset \cite{pascal2010} with Berkeley annotations \cite{annotations2009}.
-
-To align our model as much as possible with their work we use the same SplineCNN (\citealp{spline2018}) with the same embedding size and number of layers to generate node embeddings. We use $p=2$ for our norm (to avoid using additional parameters), and the no-BP variant of the cost matrix. For numeric stabilization we scaled the kernel matrix by the sum of all entries divided by the number of entries: $\text{reg} = \frac{\norm{C_l}_1}{\max(N_1,N_2)^2}$. We also implemented the consensus step. For a detailed comparison of the two models see \mbox{Appendix \ref{appendix:consensus}}.
-
-\input{03_results_exp2.tex}

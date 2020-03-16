@@ -1,6 +1,6 @@
 \section{The Graph Distance Network}
 
-We propose the Graph Distance Network (GDN), which uses a siamese network structure with multiple shared message passing layers, the previously derived learnable cost matrix, and the Sinkhorn Distance with analytical gradient.
+We propose the Graph Distance Network (GDN), which uses a siamese network structure with multiple shared message passing layers, the previously derived learnable cost matrix, and the Sinkhorn distance with analytic gradients.
 
 Let $d_h$ be an arbitrary embedding size, $d_{\text{node}}$ the number of node features of the input graphs, $d_{\text{edge}}$ the number of edge types, $W_l \in \mathbb{R}^{d_h \times d_h}$, $b_l \in   \mathbb{R}^{d_h}$ a weight matrix and bias, $h_i^l \in \mathbb{R}^{d_h}$ the embedding of node $i$ at layer $l$ for $l > 0$, $\sigma(\cdot)$ an elementwise non-linearity, and $E \in \mathbb{R}^{d_{\text{edge}} \times d_h \times d_h}$ a weight tensor ($h_i^0 = v_i \in \mathbb{R}^{d_{\text{node}}}$, $W_0 \in \mathbb{R}^{d_{\text{node}} \times d_h}$, $b_0 \in \mathbb{R}^{d_{\text{node}}}$). We then use the following message passing function:
 \begin{equation}
