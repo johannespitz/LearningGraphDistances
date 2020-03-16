@@ -74,7 +74,8 @@ The main difference between our model and \cite{fey2020_update} is that they nor
 \end{table}
 
 Note1: All superscripts indicate the layer of the consensus step.
-Note2: \cite{fey2020_update} use only those pairs where every node in the source graph finds a match in the target graph (therefore: $N_1 < N_2$). And since we use the no-BP cost matrix we have $1 \leq i, j \leq N_2$
+Note2: $\gamma^l \in \mathbb{R}$ is a trainable parameter initialized with 1.
+Note3: \cite{fey2020_update} use only those pairs where every node in the source graph finds a match in the target graph (therefore: $N_1 < N_2$). And since we use the no-BP cost matrix we have $1 \leq i, j \leq N_2$
 
 % $$ \begin{cases}
 %     \beta^l C^0_{i,j} + (1 - \beta^l) \text{MLP}(h_i - h_j) & \text{if}\ 1 \leq i \leq N_1,\ 1 \leq j \leq N_2\\
