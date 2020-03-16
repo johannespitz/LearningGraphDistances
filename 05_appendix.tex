@@ -44,12 +44,51 @@ Our model can be trained with pairs or triplets as it is. I did not include any 
 
 The main difference between our model and \cite{fey2020_update} is that they normalize the cost matrix $C$ instead of kernel matrix $e^{-\frac{C}{\lambda}}$. Consequently, they report bad gradients with Sinkhorn normalization and use row-wise sofmax instead. For their cost matrix they only use the pairwise distances between nodes without padding with norms, which should not be a problem for tasks where each node in the first graph has a match in the second graph, but could be problematic in other settings. Below we have a complete list of the differences between our models:
 
-\begin{alignat*}{3}
-     & && \quad \text{\cite{fey2020_update}} && \quad \text{Ours} \\
-     &C^0_{i,j} &&= h_i \cdot h_j &&= \norm{h_i - h_j}_2 \qquad \text{(fill with norms)} \\
-     &C^l_{i,j} &&= C^{l - 1}_{i,j} + \text{MLP}(h_i - h_j) &&= \beta_l C^0_{i,j} + (1 - \beta_l) \text{MLP}(h_i - h_j) \qquad \text{(keep old norms scaled by } \alpha^2 \text{)} \\
-     &M^l &&= \text{softmax}(C^l) &&= \text{sinkhorn}(e^{-\frac{C^l * \text{reg}}{\lambda}}) \\
-\end{alignat*}
+
+\begin{table}[htbp]
+    \addtolength{\tabcolsep}{-1pt}
+    \fontsize{9pt}{10.25pt}\selectfont
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|C{1cm}|c|c|}
+        \hline
+        & DGC & GDN \\
+        \hline
+        $C^0_{i,j} $ & $h_i^0 \cdot h_j^0$ & $\begin{cases}
+            \norm{h_i^0 - h_j^0}_2 & \text{if}\ 1 \leq i \leq N_1,\ 1 \leq j \leq N_2\\
+            \norm{\alpha h_i^0}_2 & \text{if}\ N_1 < i \leq N_2,\ 1 \leq j \leq N_2
+         \end{cases}$ \\
+        % \hline
+        $C^l_{i,j} $ & $C^{l - 1}_{i,j} + \text{MLP}(h_i^l - h_j^l)$ & $
+        \begin{cases}
+            \beta^l C^0_{i,j} + (1 - \beta^l) \text{MLP}(h_i^l - h_j^l) & \text{if}\ 1 \leq i \leq N_1,\ 1 \leq j \leq N_2\\
+            \gamma^l \gamma^l C^{l - 1}_{i,j}  & \text{if}\ N_1 < i \leq N_2,\ 1 \leq j \leq N_2
+        \end{cases}
+        $ \\
+        % \hline
+        $M^l $ & $\operatorname{softmax}(C^l)$ & $\operatorname{sinkhorn}\left(e^{-\frac{C^l * \text{reg}^l}{\lambda}}\right)$ \\
+        \hline
+    \end{tabular}
+    \caption{Differences of the two models}
+    \label{tab:ex1-data}
+\end{table}
+
+Note1: All superscripts indicate the layer of the consensus step.
+Note2: \cite{fey2020_update} use only those pairs where every node in the source graph finds a match in the target graph (therefore: $N_1 < N_2$). And since we use the no-BP cost matrix we have $1 \leq i, j \leq N_2$
+
+% $$ \begin{cases}
+%     \beta^l C^0_{i,j} + (1 - \beta^l) \text{MLP}(h_i - h_j) & \text{if}\ 1 \leq i \leq N_1,\ 1 \leq j \leq N_2\\
+%     \gamma^2 C^0_{i,j}  & \text{if}\ i > N_1,\ 1 \leq j \leq N_2\\
+%     \gamma^2 C^0_{i,j} & \text{if}\ 1 \leq i \leq N_1,\ j > N_2
+%  \end{cases}
+%  $$
+
+% \begin{alignat*}{3}
+%      & && \quad \text{\cite{fey2020_update}} && \quad \text{Ours} \\
+%      &C^0_{i,j} &&= h_i \cdot h_j &&= \norm{h_i - h_j}_2 \qquad \text{(fill with norms)} \\
+%      &C^l_{i,j} &&= C^{l - 1}_{i,j} + \text{MLP}(h_i - h_j) &&= \beta_l C^0_{i,j} + (1 - \beta_l) \text{MLP}(h_i - h_j) \qquad \text{(keep old norms scaled by } \alpha^2 \text{)} \\
+%      &M^l &&= \operatorname{softmax}(C^l) &&= \operatorname{sinkhorn}(e^{-\frac{C^l * \text{reg}}{\lambda}}) \\
+% \end{alignat*}
 
 % We also implemented a consensus step based on their work. We use instead of
 % \\
@@ -57,8 +96,8 @@ The main difference between our model and \cite{fey2020_update} is that they nor
 % $C_0 = \norm{h_s - h_t}_2$ fill with norms\\
 % $C_l = C_{l - 1} + \text{MLP}(h_s - h_t)$\\
 % $C_l = \beta_l C_0 + (1 - \beta_l) \text{MLP}(h_s - h_t)$ keep old norms scaled by $\alpha^2$\\
-% $M_l = \text{softmax}(C_l)$ \\
-% $M_l = \text{sinkhorn}(e^{-\frac{C_l * \text{reg}}{\lambda}}) \quad \text{reg} = \frac{\norm{C_l}_1}{\max(n1,n2)^2}$\\
+% $M_l = \operatorname{softmax}(C_l)$ \\
+% $M_l = \operatorname{sinkhorn}(e^{-\frac{C_l * \text{reg}}{\lambda}}) \quad \text{reg} = \frac{\norm{C_l}_1}{\max(n1,n2)^2}$\\
 
 
 

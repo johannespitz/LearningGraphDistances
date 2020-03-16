@@ -18,7 +18,7 @@ To compute the entries of the cost matrix we concatenate all node embeddings and
      \end{gathered}
 \end{equation}
 
-In the first experiment we tested three different norms: the euclidean norm ($p=2$), the manhattan norm ($p=1$), and a simple two layer perceptron (MLP). The first layer of this MLP does not change the embedding size, then we apply a relu non-linearity. The second layer reduces the embedding size to a single number to which we apply the softplus non-linearity, $\ln(1 + e^x)$.
+In the first experiment we tested three different norms: the euclidean norm ($p=2$), the manhattan norm ($p=1$), and a simple two layer perceptron (MLP). The first layer of this MLP does not change the embedding size, then we apply a $\operatorname{relu}$ non-linearity. The second layer reduces the embedding size to a single number to which we apply the $\operatorname{softplus}$ non-linearity, $\ln(1 + e^x)$.
 
 As for the matrix $C$ itself we tested two variants. The first one we call BP-Distance on account of bipartite graph matching. Due to implementation advantages we decided to pad the pairwise distances with rows and columns of $C_{i, \epsilon}, C_{\epsilon, j}$ respectively, instead of the $\infty$-values typically used.
 \begin{equation}
@@ -41,7 +41,7 @@ This does lead to different results after Sinkhorn normalization due to the entr
 The final distance $d$ is then computed and trained via the mean squared error between target distance and prediction:
 \begin{equation}
      \begin{gathered}
-          M = \text{sinkhorn}(e^{-\frac{C}{\lambda}}) \\
+          M = \operatorname{sinkhorn}\left(e^{-\frac{C}{\lambda}}\right) \\
           d = \langle M, C \rangle_\mathrm{F} \\
           \text{loss} = (d - d_\text{target})^2
      \end{gathered}
