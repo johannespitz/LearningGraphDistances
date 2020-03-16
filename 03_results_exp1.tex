@@ -1,14 +1,8 @@
-\subsection{Experiment 1}
 
-% Dataset
-For our first experiment we use synthetic preferential attachment graphs (\citealp{pref_att2002}) and real-world chemical molecules of the AIDS dataset\footnote{\url{https://wiki.nci.nih.gov/display/NCIDTPdata/AIDS+Antiviral+Screen+Data}}. Both datasets have discrete node and edge features, and graphs are limited to at most 30 nodes. We provide some basic dataset statists in the appendix (Table \ref{tab:ex1-data}).
 
-% Baseline Setup
-We compare our results to the implementations of \cite{riba2018}, \cite{bai2019}, and \cite{li2019} in Table \ref{tab:ex1-baselines}. All methods are described in the Related Work Section. We train for 500 epochs, and report the best error on the validation set and the corresponding test error. We ran 3 trials of every setting and searched over cross product of 2 different batch sizes (depending on the implementation), 32 and 64-dimensional node embeddings, 1 and 3 layers of message passing, 4 learning rates, and 4 degrees of regularization. Implementation details can be found in the respective gitlab repositories\footnote{Riba: \url{https://gitlab.lrz.de/ge98beq/siamese_ged}, Bai \url{https://gitlab.lrz.de/ge98beq/simgnn}, Li \url{https://gitlab.lrz.de/ge98beq/gmn/tree/gr_report}}.
-% Adam/SGD
+% Discussion
+Table \ref{tab:ex1-baselines} shows that our method clearly outperforms all baselines. Best results on both datasets were found with the no-BP cost matrix, MLP-norm, and small weight decay for regularization. Interestingly, the only difference in the configurations is the  Sinkhorn regularization constant $\lambda$, which is smaller for the synthetic graphs. However, somewhat concerning is the gap between the validation and test performance on the real-world dataset, which also appears with the model of \cite{bai2019}. This phenomenon will be discussed in the ablation study.
 
-% GDN Setup
-For our model, the graph distance network (GDN), we fixed the batch size to 1024, the embedding size to 32, and the number of layers to 3, and added 3 choices for the Sinkhorn regularization constant $\lambda$. Moreover, we include an ablation study over the choice of the cost matrix and different norms in Table \ref{tab:ex1-ablation}.
 
 \begin{table}[htbp]
     \addtolength{\tabcolsep}{-1pt}
@@ -28,8 +22,15 @@ For our model, the graph distance network (GDN), we fixed the batch size to 1024
     \label{tab:ex1-baselines}
 \end{table}
 
-% Discussion
-Table \ref{tab:ex1-baselines} shows that our method clearly outperforms all baselines. Best results on both datasets were found with the no-BP cost matrix, MLP-norm, and small weight decay for regularization. Interestingly, the only difference in the configurations is the  Sinkhorn regularization constant $\lambda$, which is smaller for the synthetic graphs. However, somewhat concerning is the gap between the validation and test performance on the real-world dataset, which also appears with the model of \cite{bai2019}. This phenomenon will be discussed in the ablation study.
+
+
+The ablation study in Table \ref{tab:ex1-ablation} indicates that:
+\begin{itemize}
+    \itemsep0em
+    \item \textbf{The euclidean norm is superior to the manhattan norm, and a trainable MLP can improve results even further.}
+    \item \textbf{There comes no immediate benefit from the full size cost matrix.} In all but one case the no-BP cost matrix is at least as good as the BP variant in validation and test performance. Even though intuitively it feels convenient to have the option to explicitly add or remove nodes, it may be the case that we can get the same result by substituting one node for another in the case of the GED. However, using the no-BP matrix could certainly lead to problems when attempting to learn "sparse matchings" where only a few nodes have a match in the other graph. Moreover, it is not surprising that the results of both variants are very similar because the Sinkhorn normalization will place a lot of weight onto the 0 entries in the cost matrix. It does that to a point where summing over the part of the rows (or columns depending on which graph has more nodes) which had 0 entries before normalization yields values close to 1. Therefore, the values that contribute to the distance come mostly from entries which also show up in our no-BP variant matrix.
+    \item \textbf{The AIDS validation set does not properly represent the entire distribution.} The difference in validation and test performance on the synthetic graphs can be explained by the variation between consecutive epochs. Since we stop on the best validation result it is no surprise that the test result at that exact point is slightly worse on average. In contrast, the massive gap in performance, and the high standard deviation on the AIDS test set indicate a shift of distributions between the validation and the test set. Some runs generalized well from the training data to the validation set, but they consistently preformed worse on the test set across all epochs. Interestingly, not all runs behaved that way. We also collected many runs where the test performance is close to validation performance\footnote{Often these runs had higher Sinkhorn regularization but we did not run further experiments to verify that impression.}. Apparently the manhattan norm is more susceptible to overfit in this manner than the MLP norm.
+\end{itemize}
 
 
 \begin{table}[htbp]
@@ -51,14 +52,6 @@ Table \ref{tab:ex1-baselines} shows that our method clearly outperforms all base
     \caption{Ablation Study: RMSE with standard deviation across 3 runs.}
     \label{tab:ex1-ablation}
 \end{table}
-
-The ablation study in Table \ref{tab:ex1-ablation} indicates that:
-\begin{itemize}
-    \itemsep0em
-    \item \textbf{The euclidean norm is superior to the manhattan norm, and a trainable MLP can improve results even further.}
-    \item \textbf{There comes no immediate benefit from the full size cost matrix.} In all but one case the no-BP cost matrix is at least as good as the BP variant in validation and test performance. Even though intuitively it feels convenient to have the option to explicitly add or remove nodes, it may be the case that we can get the same result by substituting one node for another in the case of the GED. However, using the no-BP matrix could certainly lead to problems when attempting to learn "sparse matchings" where only a few nodes have a match in the other graph. Moreover, it is not surprising that the results of both variants are very similar because the Sinkhorn normalization will place a lot of weight onto the 0 entries in the cost matrix. It does that to a point where summing over the part of the rows (or columns depending on which graph has more nodes) which had 0 entries before normalization yields values close to 1. Therefore, the values that contribute to the distance come mostly from entries which also show up in our no-BP variant matrix.
-    \item \textbf{The AIDS validation set does not properly represent the entire distribution.} The difference in validation and test performance on the synthetic graphs can be explained by the variation between consecutive epochs. Since we stop on the best validation result it is no surprise that the train result at that exact point is slightly worse on average. However, the massive gap in performance, and the high standard deviation on the AIDS test set show that some runs were able to generalize well from the training data to the validation set, but failed completely to generalize to the test set. It is important to note that not all runs behaved that way. We also collected many runs where the test performance is close to validation performance\footnote{Often these runs had higher Sinkhorn regularization but we did not run further experiments to verify that impression.}. Apparently the manhattan norm is more susceptible to overfit in this manner than the MLP norm.
-\end{itemize}
 
 
 % Note bai has those 115 / 54 mse's

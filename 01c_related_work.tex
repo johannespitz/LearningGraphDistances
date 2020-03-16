@@ -1,4 +1,5 @@
 \section{Related Work}
+\label{section:related_work}
 
 Researchers have already applied graph neural networks to the task of GED approximation. Bai et al. proposed in 2018 (published \citealp{bai2019}) to apply the same network to both graphs and aggregate the resulting node embeddings with an attention layer into two global graph embeddings, which can be used to compute a distance. In addition to this fully differentiable and therefore trainable part, they compute a histogram of the pairwise distances between node embeddings to incorporate some of the local node level information. However, the histogram method is not differentiable and it is unclear if the model can properly exploit this information. Moreover, this process reduces any graph to fixed-size embeddings and is unlikely to scale to larger graphs without hand-tuning the embedding size. Despite these flaws the authors show that their method significantly outperforms classical methods while being orders of magnitude faster at inference.
 

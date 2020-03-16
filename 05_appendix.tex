@@ -39,6 +39,33 @@ Currently we have a few different options for train/val/test splits. The simples
 
 Our model can be trained with pairs or triplets as it is. I did not include any results with the dataset in this report because the baselines cannot be trained on it (without putting in additional work).
 
+\section{Consensus Step}
+\label{appendix:consensus}
+
+The main difference between our model and \cite{fey2020_update} is that they normalize the cost matrix $C$ instead of kernel matrix $e^{-\frac{C}{\lambda}}$. Consequently, they report bad gradients with Sinkhorn normalization and use row-wise sofmax instead. For their cost matrix they only use the pairwise distances between nodes without padding with norms, which should not be a problem for tasks where each node in the first graph has a match in the second graph, but could be problematic in other settings. Below we have a complete list of the differences between our models:
+
+\begin{alignat*}{3}
+     & && \quad \text{\cite{fey2020_update}} && \quad \text{Ours} \\
+     &C^0_{i,j} &&= h_i \cdot h_j &&= \norm{h_i - h_j}_2 \qquad \text{(fill with norms)} \\
+     &C^l_{i,j} &&= C^{l - 1}_{i,j} + \text{MLP}(h_i - h_j) &&= \beta_l C^0_{i,j} + (1 - \beta_l) \text{MLP}(h_i - h_j) \qquad \text{(keep old norms scaled by } \alpha^2 \text{)} \\
+     &M^l &&= \text{softmax}(C^l) &&= \text{sinkhorn}(e^{-\frac{C^l * \text{reg}}{\lambda}}) \\
+\end{alignat*}
+
+% We also implemented a consensus step based on their work. We use instead of
+% \\
+% $C_0 = h_s \cdot h_t$\\
+% $C_0 = \norm{h_s - h_t}_2$ fill with norms\\
+% $C_l = C_{l - 1} + \text{MLP}(h_s - h_t)$\\
+% $C_l = \beta_l C_0 + (1 - \beta_l) \text{MLP}(h_s - h_t)$ keep old norms scaled by $\alpha^2$\\
+% $M_l = \text{softmax}(C_l)$ \\
+% $M_l = \text{sinkhorn}(e^{-\frac{C_l * \text{reg}}{\lambda}}) \quad \text{reg} = \frac{\norm{C_l}_1}{\max(n1,n2)^2}$\\
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 % \begin{equation}
 %     \begin{gathered}

@@ -13,7 +13,7 @@ Previously designed neural network models for graph distance estimation either r
 We propose a model that can learn arbitrary metrics on graphs by using a novel combination of a classical cost matrix and an explicit soft matching, similar to that used by \cite{fey2020_update} in the context of graph matching. The main contributions of this report are:
 \begin{itemize}
     \itemsep0em
-    \item The Graph Distance Network (GDN): A model derived from properties of distance functions and classical algorithms for approximating the GED that uses a cost matrix, a soft matching, and fast backpropagation.
+    \item The Graph Distance Network (GDN): A model derived from properties of distance functions and classical algorithms for approximating the GED that uses a cost matrix, a soft matching with analytical gradients.
     \item Experiments showing that our model improves upon state-of-the-art neural networks in predicting the GED.
     \item Empirical evidence that our different application of the Sinkhorn normalization improves upon results of \cite{fey2020_update} in graph matching.
 \end{itemize}

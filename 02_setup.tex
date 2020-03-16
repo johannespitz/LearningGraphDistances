@@ -1,26 +1,12 @@
-\section{Setup}
+\section{The Graph Distance Network}
 
-% Siamese GCN.
-% Aggregate
-% Set up cost matrix (bp vs. normal, scale with $\alpha$).
-% norms
-% Compute explicit matching with Sinkhorn (use cost matrix as kernel, can tune $\lambda$).
-% Use optimal matching for backpropagation.
-% Multiply matching with cost matrix.
+We propose the Graph Distance Network (GDN), which uses a siamese network structure with multiple shared message passing layers, the previously derived learnable cost matrix, and the Sinkhorn Distance with analytical gradient.
 
-\subsection{Experiment 1}
-
-For our experiments we use the a siamese network structure with multiple shared message passing layers, followed by the matching step.
-
-% TODO leaky relu
-
-Let $d_h$ be an arbitrary embedding size, $d_{\text{node}}$ be the number of node features of the input graphs, $d_{\text{edge}}$ be the number of edge features, $W_l \in \mathbb{R}^{d_h \times d_h}$, $b_l \in   \mathbb{R}^{d_h}$be a weight matrix and bias, $h_i^l \in \mathbb{R}^{d_h}$ be the embedding of node $i$ at layer $l$ for $l > 0$, $\sigma(\cdot)$ be an elementwise non-linearity, $E \in \mathbb{R}^{d_{\text{edge}} \times d_h \times d_h}$ be a weight tensor ($h_i^0 = v_i \in \mathbb{R}^{d_{\text{node}}}$, $W_0 \in \mathbb{R}^{d_{\text{node}} \times d_h}$, $b_0 \in \mathbb{R}^{d_{\text{node}}}$).
-
-In our first experiment we use the following message passing function:
+Let $d_h$ be an arbitrary embedding size, $d_{\text{node}}$ the number of node features of the input graphs, $d_{\text{edge}}$ the number of edge types, $W_l \in \mathbb{R}^{d_h \times d_h}$, $b_l \in   \mathbb{R}^{d_h}$ a weight matrix and bias, $h_i^l \in \mathbb{R}^{d_h}$ the embedding of node $i$ at layer $l$ for $l > 0$, $\sigma(\cdot)$ an elementwise non-linearity, and $E \in \mathbb{R}^{d_{\text{edge}} \times d_h \times d_h}$ a weight tensor ($h_i^0 = v_i \in \mathbb{R}^{d_{\text{node}}}$, $W_0 \in \mathbb{R}^{d_{\text{node}} \times d_h}$, $b_0 \in \mathbb{R}^{d_{\text{node}}}$). We then use the following message passing function:
 \begin{equation}
      h_i^{l} = \sigma(W_{l} h_i^{l-1} + b_l) + \sum_{j \rightarrow i} \sigma(W_{l} h_j^{l-1} + b_l) E_{e_{j \rightarrow i}}
 \end{equation}
-where $E_{e_{j \rightarrow i}} \in \mathbb{R}^{d_h \times d_h}$ is the weight tensor indexed by the discrete feature of the edge connecting node $j$ with node $i$. As activation function $\sigma(\cdot)$ we use the leaky\_relu non-linearity.
+where $E_{e_{j \rightarrow i}} \in \mathbb{R}^{d_h \times d_h}$ is the weight tensor indexed by the discrete feature of the edge connecting node $j$ with node $i$. As activation function $\sigma(\cdot)$ we use the $\operatorname{leaky-relu}$ non-linearity.
 
 To compute the entries of the cost matrix we concatenate all node embeddings and take the norm of pairwise distances across both graphs, or the embeddings scaled by a trainable $\alpha \in \mathbb{R}^{d_\text{final}}$:
 \begin{equation}
@@ -32,7 +18,7 @@ To compute the entries of the cost matrix we concatenate all node embeddings and
      \end{gathered}
 \end{equation}
 
-In our experiment we tested three different norms: the euclidean norm ($p=2$), the manhattan norm ($p=1$), and a simple two layer perceptron (MLP). The first layer does not change the embedding size, then we apply a relu non-linearity. The second layer reduces the embedding size to a single number to which we apply the softplus non-linearity, $\ln(1 + e^x)$.
+In the first experiment we tested three different norms: the euclidean norm ($p=2$), the manhattan norm ($p=1$), and a simple two layer perceptron (MLP). The first layer of this MLP does not change the embedding size, then we apply a relu non-linearity. The second layer reduces the embedding size to a single number to which we apply the softplus non-linearity, $\ln(1 + e^x)$.
 
 As for the matrix $C$ itself we tested two variants. The first one we call BP-Distance on account of bipartite graph matching. Due to implementation advantages we decided to pad the pairwise distances with rows and columns of $C_{i, \epsilon}, C_{\epsilon, j}$ respectively, instead of the $\infty$-values typically used.
 \begin{equation}
@@ -61,28 +47,17 @@ The final distance $d$ is then computed and trained via the mean squared error b
      \end{gathered}
 \end{equation}
 
-Implementation. Our GNN is implemented with PyTorch-geometric (\citealp{pytorchgeometric}) and can process sparse mini-batches with parallel GPU acceleration. We have two implementations for the matching. The first version pads matrices to form batches and can be used in cases where all graphs have similar number of nodes. The second version uses sparse matrices in COOrdinate format, which less efficient with evenly sized graphs but can be crucial for parallelizing workloads with a few large graphs.
+Implementation. Our GNN is implemented with PyTorch (\citealp{pytorch}), PyTorch Scatter, and PyTorch-geometric (\citealp{pytorchgeometric}) and can process sparse mini-batches with parallel GPU acceleration. We have two implementations for the matching. The first version pads matrices to form batches and can be used in cases where all graphs have a similar number of nodes. The second version uses sparse matrices in COOrdinate format, which is less efficient with evenly sized graphs but can be crucial for parallelizing workloads with skewed graph size distributions.
 
-\subsection{Experiment 2}
 
-\cite{fey2020_update} have recently applied a very similar model to ours to learn graph matching. They also use a GNN to generate node embeddings and compute a cost matrix of pairwise distances. Their main contribution is the following consensus method. After normalizing the cost matrix, they use this matching to map randomly generated features of one graph to the other. Then they apply a different GNN to the graphs with new features and repeat the process multiple times. The loss is the negative log likelihood of the soft matching given some ground truth matching (following \citealp{wang2019}). And the final performance is measured by how often the row-wise maximum in the soft matching yields the correct match (Hits@1).
+\section{Experiment Setup}
 
-To align our model as much as possible with their work we use the same SplineCNN (\citealp{spline2018}) with the same embedding size and number of layers to generate node embeddings. We use $p=2$ for our norm, and the no-BP variant of the cost matrix. For numeric stabilization we scaled the kernel matrix by the sum of all entries divided by the number of entries: $\text{reg} = \frac{\norm{C_l}_1}{\max(n1,n2)^2}$. We also implemented the consensus method for a more detailed comparison.
+% Dataset
+For our first experiment we use synthetic preferential attachment graphs (\citealp{pref_att2002}) and real-world chemical molecules of the AIDS dataset\footnote{\url{https://wiki.nci.nih.gov/display/NCIDTPdata/AIDS+Antiviral+Screen+Data}}. Both datasets have discrete node and edge features, and graphs are limited to at most 30 nodes. We provide some basic dataset statists in the appendix (Table \ref{tab:ex1-data}).
 
-The main difference between our models is that \cite{fey2020_update} normalize the cost matrix $C$ instead of kernel matrix $e^{-\frac{C}{\lambda}}$. Consequently, they report bad gradients with Sinkhorn normalization and use row-wise sofmax instead. For their cost matrix they only use the pairwise distances between nodes without padding with norms, which should not be a problem for tasks where each node in the first graph has a match in the second graph, but could be problematic in other settings. Below we have a complete list of the differences between our models:
+% Baseline Setup
+We compare our results to the implementations of \cite{riba2018}, \cite{bai2019}, and \cite{li2019} in Table \ref{tab:ex1-baselines}. All methods are described in the Related Work Section. We train for 500 epochs, and report the best error on the validation set and the corresponding test error. We ran 3 trials of every setting and searched over cross product of 2 different batch sizes (depending on the implementation), 32 and 64-dimensional node embeddings, 1 and 3 layers of message passing, 4 learning rates, and 4 degrees of regularization. Implementation details can be found in the respective gitlab repositories\footnote{Riba: \url{https://gitlab.lrz.de/ge98beq/siamese_ged}, Bai \url{https://gitlab.lrz.de/ge98beq/simgnn}, Li \url{https://gitlab.lrz.de/ge98beq/gmn/tree/gr_report}}.
+% Adam/SGD
 
-\begin{alignat*}{3}
-     & && \quad \text{\cite{fey2020_update}} && \quad \text{Ours} \\
-     &C_0 &&= h_i \cdot h_j &&= \norm{h_i - h_j}_2 \qquad \text{(fill with norms)} \\
-     &C_l &&= C_{l - 1} + \text{MLP}(h_i - h_j) &&= \beta_l C_0 + (1 - \beta_l) \text{MLP}(h_i - h_j) \qquad \text{(keep old norms scaled by} \alpha^2 \text{)} \\
-     &M_l &&= \text{softmax}(C_l) &&= \text{sinkhorn}(e^{-\frac{C_l * \text{reg}}{\lambda}}) \\
-\end{alignat*}
-
-% We also implemented a consensus step based on their work. We use instead of
-% \\
-% $C_0 = h_s \cdot h_t$\\
-% $C_0 = \norm{h_s - h_t}_2$ fill with norms\\
-% $C_l = C_{l - 1} + \text{MLP}(h_s - h_t)$\\
-% $C_l = \beta_l C_0 + (1 - \beta_l) \text{MLP}(h_s - h_t)$ keep old norms scaled by $\alpha^2$\\
-% $M_l = \text{softmax}(C_l)$ \\
-% $M_l = \text{sinkhorn}(e^{-\frac{C_l * \text{reg}}{\lambda}}) \quad \text{reg} = \frac{\norm{C_l}_1}{\max(n1,n2)^2}$\\
+% GDN Setup
+For our model, the graph distance network (GDN), we fixed the batch size to 1024, the embedding size to 32, and the number of layers to 3, and added 3 choices for the Sinkhorn regularization constant $\lambda$. Moreover, we include an ablation study over the choice of the cost matrix and different norms in Table \ref{tab:ex1-ablation}.
