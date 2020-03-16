@@ -25,7 +25,7 @@ where $E_{e_{j \rightarrow i}} \in \mathbb{R}^{d_h \times d_h}$ is the weight te
 To compute the entries of the cost matrix we concatenate all node embeddings and take the norm of pairwise distances across both graphs, or the embeddings scaled by a trainable $\alpha \in \mathbb{R}^{d_\text{final}}$:
 \begin{equation}
      \begin{gathered}
-          h_i^\text{final} = [h_L^i ; \dots ; h_1^i ; \sigma(W_{1} h_i^{0} + b_0)] \in \mathbb{R}^{d_\text{final}}\\
+          h_i^\text{final} = [h_i^L ; \dots ; h_i^1 ; \sigma(W_{1} h_i^{0} + b_0)] \in \mathbb{R}^{d_\text{final}}\\
           C_{i,j} = \norm{h_i^\text{final} - h_j^\text{final}} \quad
           C_{i, \epsilon} = \norm{ \alpha h_i^\text{final}} \quad
           C_{\epsilon, j} = \norm{ \alpha h_j^\text{final}} \quad i \in \{1 \dots N_1\}, j \in \{1 \dots N_2\}

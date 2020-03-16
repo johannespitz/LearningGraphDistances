@@ -8,17 +8,11 @@ Researchers have already applied message passing neural networks to the task of 
 % and (3) Volgenant Jonker VJ [9, 18] are two cubic-time algorithms based on the Hungarian Algorithm for bipartite graph matching, and the algorithm
 % of Volgenant and Jonker, respectively
 
-Later \cite{bai2018_cnn1} proposed to apply, instead of a histogram, a standard 2-D Convolutional Neural Networks (CNN) to the matrix of pairwise distances. The main problems with this approach as described in their work are:
-\begin{itemize}
-     \itemsep0em
-     \item \textbf{Permutation invariance.} The ordering of the nodes in the graph representation should not change the computed distance.
-     \item \textbf{Spatial locality.} CNN's introduce a strong structural prior by making the assumption that nearby points are strongly related while further apart points are not.
-\end{itemize}
-The authors alleviate these problems by using breadth-first-search node-ordering (\citealp{bfs2018}). They claim that nearby nodes are sorted close to each other. However, there are cases where that does not work for all nodes. Furthermore, the ordering cannot be guaranteed to be unique. In fact, it is not yet known if there exists a polynomial algorithm to find a canonical ordering (\citealp{canonical2016}) and therefore the predictions can depend on the representation of the graphs. However, the authors show an interesting connection between convolutional kernels and the optimal assignment problem, and show strong empirical results compared to classical algorithms.
+Later \cite{bai2018_cnn1} proposed to apply, instead of a histogram, a standard 2-D Convolutional Neural Networks (CNN) to the matrix of pairwise distances. As the authors point out, the main problems with this approach are permutation invariance and spatial locality. Firstly, a CNN depends on the ordering of the nodes in the graph representation. Therefore, the model is not invariant to permutations. Secondly, CNN's introduce a strong structural prior by making the assumption that nearby points are strongly related while further apart points are not. This assumption increases the importance of node ordering further. The authors decided to use breadth-first-search node-ordering (\citealp{bfs2018}). They claim that nearby nodes are sorted close to each other. However, the ordering cannot be guaranteed to be unique. In fact, it is not yet known if there exists a polynomial algorithm to find a canonical ordering (\citealp{canonical2016}) and therefore the predictions can depend on the representation of the graphs. However, the authors show an interesting connection between convolutional kernels and the optimal assignment problem, and show strong empirical results compared to classical algorithms.
 
 Independently, \cite{riba2018} proposed a similar model to estimate graph distances. They apply the same message passing network to both graphs generating sets $A$ and $B$ of node embeddings (one for each graph). The distance between two graphs is then computed as:
 \begin{equation}
-     d(G_{1}, G_{2}) = \frac{\sum_{a \in A} \inf_{b \in B} d(a, b) + \sum_{a \in A} \inf_{b \in B} d(a, b)}{N_1 + N_2}
+     d(G_{1}, G_{2}) = \frac{\sum_{a \in A} \inf_{b \in B} d(a, b) + \sum_{b \in B} \inf_{a \in A} d(a, b)}{N_1 + N_2}
 \end{equation}
 This equation is derived as a soft variant of the Hausdorff distance, which is also known as the Chamfer distance in computer vision (\citealp{chamfer1977}). Instead of approximating the GED directly they validate their method on graph classification and keyword spotting datasets. Their empirical results are therefore difficult to compare to Bai et al. (2018; 2019). This method is interesting because it generates a complete matching between nodes and might scale to larger graphs without hand-tuning the embedding size. Local node structures are incorporated during the message passing, and global node correspondence is used for predicting the final distance.
 
