@@ -42,7 +42,7 @@ Our model can be trained with pairs or triplets as it is. I did not include any 
 \section{Consensus Step}
 \label{appendix:consensus}
 
-The main difference between our model and \cite{fey2020_update} is that they normalize the cost matrix $C$ instead of kernel matrix $e^{-\frac{C}{\lambda}}$. Consequently, they report bad gradients with Sinkhorn normalization and use row-wise sofmax instead. For their cost matrix they only use the pairwise distances between nodes without padding with norms, which should not be a problem for tasks where each node in the first graph has a match in the second graph, but could be problematic in other settings. Below we have a complete list of the differences between our models:
+The main difference between our model and \cite{fey2020_update} is that they normalize the cost matrix $C$ instead of kernel matrix $e^{-\frac{C}{\lambda}}$. Consequently, they report bad gradients with Sinkhorn normalization and use row-wise sofmax instead. For their cost matrix they only use the pairwise distances between nodes without padding with norms, which should not be a problem for tasks where each node in the first graph has a match in the second graph, but could be problematic in other settings. In Table \ref{tab:diff-models} we collected a complete list of the differences between both models:
 
 
 \begin{table}[htbp]
@@ -70,7 +70,7 @@ The main difference between our model and \cite{fey2020_update} is that they nor
         \hline
     \end{tabular}
     \caption{Differences of the two models}
-    \label{tab:ex1-data}
+    \label{tab:diff-models}
 \end{table}
 
 Note1: All superscripts indicate the layer of the consensus step.

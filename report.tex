@@ -65,12 +65,14 @@ Computing meaningful distances between graphs is often difficult due to the comb
 
 \section{Background}
 
-Let $\mathcal{G}$ be a set of graphs, where each graph $G = \{V, E\} \in \mathcal{G}$ with nodes $V$ and edges $E$ is drawn from a common distribution. The nodes and edges may have arbitrary features. Usually we expect the number of edges $\vert E \vert$ to be much smaller than the number of all possible edges, i.e. $N^2 = \vert V \vert ^2$. Possible distributions include chemical molecules, control flow graphs, or synthetic preferential attachment graphs (\citealp{pref_att2002}).
+Let $\mathcal{G}$ be a set of graphs, where each graph $G = \{V, E\} \in \mathcal{G}$ with nodes $V$ and edges $E$ is drawn from a common distribution. The nodes and edges may have arbitrary features. Let $N$ denote the number of nodes $\vert V \vert$. Usually we expect the number of edges $\vert E \vert$ to be much smaller than the number of all possible edges: $N^2$. Possible distributions include chemical molecules, control flow graphs, or synthetic preferential attachment graphs (\citealp{pref_att2002}).
 
-Graph neural networks are based on message passing:
-message
-propagate
-update.
+Graph neural networks based on the message passing scheme (\citealp{gilmer2017}) aggregate the features of nodes in the neighborhood $\mathcal{N}_1$ of node $i$ along their edges with features $e_{j,i}$. The aggregate $a_i^l$ is then used to update the node feature $h_i^{l-1}$ in the next layer $l$.
+\begin{equation}
+    a_i^l = \operatorname{Aggregate}^l\left(\{\!\!\{(h_j^{l-1}, e_{j,i}) : j \in \mathcal{N}_1(i)\}\!\!\}\right), \quad
+    h_i^l = \operatorname{Update}^l\left( h_i^{l-1}, a_i^l \right)
+\end{equation}
+Here $h_i^0 = v_i \in V$ and $\{\!\!\{ \dots \}\!\!\}$ denotes a multiset.
 
 \input{01c_related_work.tex}
 
