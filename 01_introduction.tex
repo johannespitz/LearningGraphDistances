@@ -10,10 +10,10 @@ A graph matching establishes a node correspondence between graphs, maximizing co
 
 Previously designed neural network models for graph distance estimation either reduce the entire graph to a single embedding vector creating an information bottleneck if scaling to larger graphs (\citealp{bai2019}, \citealp{li2019}), or they implicitly use a crude and strict matching (\citealp{riba2018}).
 
-We propose a model that can learn arbitrary metrics on graphs by using a novel combination of a classical cost matrix and an explicit soft matching, similar to that used by \cite{fey2020_update} in the context of graph matching. The main contributions of this report are:
+We propose a model for learning metrics on graphs by using a novel combination of a classical cost matrix and an explicit soft matching. The main contributions of this report are:
 \begin{itemize}
     \itemsep0em
-    \item The Graph Distance Network (GDN): A model derived from properties of distance functions and classical algorithms for approximating the GED that uses a cost matrix, a soft matching with analytic gradients.
+    \item The Graph Distance Network (GDN): A model derived from properties of distance functions and classical algorithms for approximating the GED that uses a cost matrix and a soft matching with analytic gradients.
     \item Experiments showing that our model improves upon state-of-the-art neural networks in predicting the GED.
     \item Empirical evidence that our different application of the Sinkhorn normalization improves upon results of \cite{fey2020_update} in graph matching.
 \end{itemize}

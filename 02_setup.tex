@@ -18,9 +18,9 @@ To compute the entries of the cost matrix we concatenate all node embeddings and
      \end{gathered}
 \end{equation}
 
-In the first experiment we tested three different norms: the euclidean norm ($p=2$), the manhattan norm ($p=1$), and a simple two layer perceptron (MLP). The first layer of this MLP does not change the embedding size, then we apply a $\operatorname{relu}$ non-linearity. The second layer reduces the embedding size to a single number to which we apply the $\operatorname{softplus}$ non-linearity, $\ln(1 + e^x)$.
+In the following experiment we tested three different norms: the euclidean norm ($p=2$), the manhattan norm ($p=1$), and a simple two layer perceptron (MLP). The first layer of this MLP does not change the embedding size, then we apply a $\operatorname{relu}$ non-linearity. The second layer reduces the embedding size to a single number to which we apply the $\operatorname{softplus}$ non-linearity, $\ln(1 + e^x)$.
 
-As for the matrix $C$ itself we tested two variants. The first one we call BP-Distance on account of bipartite graph matching. Due to implementation advantages we decided to pad the pairwise distances with rows and columns of $C_{i, \epsilon}, C_{\epsilon, j}$ respectively, instead of the $\infty$-values typically used.
+As for the matrix $C$ we tested two variants. The first one we call BP-Distance on account of bipartite graph matching. Due to implementation advantages we decided to pad the pairwise distances with rows and columns of $C_{i, \epsilon}, C_{\epsilon, j}$ respectively, instead of the $\infty$-values typically used.
 \begin{equation}
      C_\text{BP}=
           \left[
@@ -53,10 +53,10 @@ Implementation. Our GNN is implemented with PyTorch (\citealp{pytorch}), PyTorch
 \section{Experiment Setup}
 
 % Dataset
-For our first experiment we use synthetic preferential attachment graphs (\citealp{pref_att2002}) and real-world chemical molecules of the AIDS dataset\footnote{\url{https://wiki.nci.nih.gov/display/NCIDTPdata/AIDS+Antiviral+Screen+Data}}. Both datasets have discrete node and edge features, and graphs are limited to at most 30 nodes. We provide some basic dataset statists in the appendix (Table \ref{tab:ex1-data}).
+For our first experiment we use synthetic preferential attachment graphs (\citealp{pref_att2002}) and real-world chemical molecules of the AIDS dataset\footnote{\url{https://wiki.nci.nih.gov/display/NCIDTPdata/AIDS+Antiviral+Screen+Data}}. Both datasets have discrete node and edge features, and graphs are limited to at most 30 nodes. We provide some basic dataset statists in the Appendix \ref{appendix:GED}.
 
 % Baseline Setup
-We compare our results to the implementations of \cite{riba2018}, \cite{bai2019}, and \cite{li2019} in Table \ref{tab:ex1-baselines}. All methods are described in the Related Work Section. We train for 500 epochs and report the best error on the validation set and the corresponding test error. We ran 3 trials of every setting and searched over the cross product of 2 different batch sizes (depending on the implementation), 32 and 64-dimensional node embeddings, 1 and 3 layers of message passing, 4 learning rates, and 4 degrees of regularization. Implementation details can be found in the respective GitLab repositories\footnote{Riba: \url{https://gitlab.lrz.de/ge98beq/siamese_ged}, Bai \url{https://gitlab.lrz.de/ge98beq/simgnn}, Li \url{https://gitlab.lrz.de/ge98beq/gmn/tree/gr_report}}.
+We compare our results to the implementations of \cite{riba2018}, \cite{bai2019}, and \cite{li2019} in Table \ref{tab:ex1-baselines}. All methods are described in the Related Work Section. We train for 500 epochs and report the best error on the validation set and the corresponding test error. We ran 3 trials of every setting and searched over the cross product of 2 different batch sizes (depending on the implementation), 32 and 64-dimensional node embeddings, 1 and 3 layers of message passing, 4 learning rates, and 4 degrees of regularization. Implementation details can be found in the respective GitLab repositories\footnote{Riba: \url{https://gitlab.lrz.de/gdn/siamese_ged}, Bai \url{https://gitlab.lrz.de/gdn/simgnn}, \\Li \url{https://gitlab.lrz.de/gdn/gmn/tree/gr_report}}.
 % Adam/SGD
 
 % GDN Setup
