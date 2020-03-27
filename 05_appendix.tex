@@ -4,25 +4,25 @@
 In this report I summarize the work I did during my guided research. The main part of the report focuses on findings that are relevant to a potential paper submission, but here in the appendix I will add some information about the datasets we used, and some we did not use (for completeness).
 
 
-\section{Graph Edit Distance Datasets}
-\label{appendix:GED}
-\begin{table}[htbp]
-    \addtolength{\tabcolsep}{-1pt}
-    \fontsize{9pt}{10.25pt}\selectfont
-    \centering
-    \renewcommand{\arraystretch}{1.2}
-    \begin{tabular}{|l|c|c|c|c|c|c|c|}
-        \hline
-        Dataset & Node Feat & Edge Feat & \#Train & \#Val/Test & Max Nodes & Avg Nodes & Avg Edges \\
-        \hline
-        Pref-Att & 6 & 4 & 144 & 48 & 30 & 20.6 & 75.4 \\ % edges mean 75.4
-        \hline
-        AIDS & 53 & 4 & 144 & 48 & 30 & 20.6 & 44.6 \\ % edges mean 44.6
-        \hline
-    \end{tabular}
-    \caption{Datasets}
-    \label{tab:ex1-data}
-\end{table}
+% \section{Graph Edit Distance Datasets}
+% \label{appendix:GED}
+% \begin{table}[htbp]
+%     \addtolength{\tabcolsep}{-1pt}
+%     \fontsize{9pt}{10.25pt}\selectfont
+%     \centering
+%     \renewcommand{\arraystretch}{1.2}
+%     \begin{tabular}{|l|c|c|c|c|c|c|c|}
+%         \hline
+%         Dataset & Node Feat & Edge Feat & \#Train & \#Val/Test & Max Nodes & Avg Nodes & Avg Edges \\
+%         \hline
+%         Pref-Att & 6 & 4 & 144 & 48 & 30 & 20.6 & 75.4 \\ % edges mean 75.4
+%         \hline
+%         AIDS & 53 & 4 & 144 & 48 & 30 & 20.6 & 44.6 \\ % edges mean 44.6
+%         \hline
+%     \end{tabular}
+%     \caption{Datasets}
+%     \label{tab:ex1-data}
+% \end{table}
 
 Note \#Train and \#Val/Test are the number of graphs. We train and validate/test on all possible pairs of graphs, except those where a graph is paired with itself.
 
@@ -110,23 +110,42 @@ Note3: \cite{fey2020_update} use only those pairs where every node in the source
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-% \begin{equation}
-%     \begin{gathered}
-%          h_i^\text{final} = [h_i^L ; \dots ; h_i^1] \in \mathbb{R}^{d_\text{final}}\\
-%          C_{i,j} = \norm{h_i^\text{final} - h_j^\text{final}} \\
-%          C_{i, \epsilon} = \norm{ \alpha h_i^\text{final}} \quad
-%          C_{\epsilon, j} = \norm{ \alpha h_j^\text{final}} \\ i \in \{1 \dots N_1\}, j \in \{1 \dots N_2\}
-%     \end{gathered}
-% \end{equation}
+\begin{equation}
+    \begin{gathered}
+         C_{i,j} = \norm{h_i - h_j} \\
+         C_{i, \epsilon} = \norm{ \alpha h_i} \quad
+         C_{\epsilon, j} = \norm{ \alpha h_j} \\
+        %  i \in \{1 \dots N_1\}, j \in \{1 \dots N_2\}
+    \end{gathered}
+\end{equation}
+
+\begin{equation}
+    \begin{gathered}
+         \argmin \\
+         \in \{0,1\} \\
+         \in [0,1] \\
+         + \lambda\text{H}(M)
+    \end{gathered}
+\end{equation}
+
+\begin{equation}
+    \begin{gathered}
+        \mathcal{O}(N^2) \\
+        \mathcal{O}(N^3) \\
+        \mathcal{O}(N^3 \log(N)) \\
+        \mathcal{O}(N^2) \\
+    \end{gathered}
+\end{equation}
 
 
 % \begin{equation}
 % C_\text{no-BP} \in \mathbb{R}^{\max({N_1, N_2}) \times \max({N_1, N_2})}
 % \end{equation}
 
-% \begin{equation}
-%     \frac{\partial d}{\partial c_{i,j}} = m^*_{i,j}
-% \end{equation}
+\begin{equation}
+    % \frac{\partial d}{\partial C_{i,j}} = M^*_{i,j}
+    d = \langle M^*, C \rangle_\mathrm{F}
+\end{equation}
 
 
 % \begin{equation}
@@ -140,40 +159,63 @@ Note3: \cite{fey2020_update} use only those pairs where every node in the source
 
 
 
-% \begin{table}[htbp]
-%     \addtolength{\tabcolsep}{-1pt}
-%     \fontsize{9pt}{10.25pt}\selectfont
-%     \centering
-%     \renewcommand{\arraystretch}{1.2}
-%     \begin{tabular}{|l|c|c|c|c|}
-%         \hline
-%         \multirow{2}{*}{} & \multicolumn{2}{c|}{Pref-Attachment} & \multicolumn{2}{c|}{AIDS} \\ \hhline{|~|-|-|-|-|}
-%         & Val & Test & Val & Test \\ \hhline{|=|=|=|=|=|}
-%         Riba et al. (2018) & $12.2 \pm 0.2$ & $12.1 \pm 0.6$ & $15.5 \pm 0.3$  & $15.6 \pm 0.3$ \\ \hline
-%         Bai et al. (2019) & $7.7 \pm 1.0$ & $9.6 \pm 2.5$ & $4.2 \pm 0.3$ & $8.7 \pm 0.1$ \\ \hline
-%         Li et al. (2019) & $5.5 \pm 0.1 $ & $7.8 \pm 0.3$ & $10.6 \pm 0.3$ & $11.7 \pm 0.9$ \\ \hline
-%         GDN & $4.2 \pm 0.1$ & $\boldsymbol{4.5 \pm 0.2}$ & $3.3 \pm 0.04$ & $\boldsymbol{6.2 \pm 1.0}$ \\ \hline
-%     \end{tabular}
-%     \caption{RMSE to ground truth GED with standard deviation across 3 runs.}
-%     \label{tab:ex1-baselines}
-% \end{table}
+\begin{table}[htbp]
+    \addtolength{\tabcolsep}{-1pt}
+    \fontsize{9pt}{10.25pt}\selectfont
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|l|C{3cm}|C{3cm}|}
+        \hline
+        & Pref-Attachment & AIDS \\ \hhline{|=|=|=|}
+        Riba et al. (2018) & $12.1 \pm 0.6$  & $15.6 \pm 0.3$ \\ \hline
+        Bai et al. (2019) & $9.6 \pm 2.5$ & $8.7 \pm 0.1$ \\ \hline
+        Li et al. (2019)& $7.8 \pm 0.3$ & $11.7 \pm 0.9$ \\ \hline
+        GDN & $\boldsymbol{4.5 \pm 0.2}$ & $\boldsymbol{6.2 \pm 1.0}$ \\ \hline
+    \end{tabular}
+    \caption{RMSE $\pm$ std (3 runs)}
+    \label{tab:ex1-baselines}
+\end{table}
+
+\begin{table}[htbp]
+    \addtolength{\tabcolsep}{-1pt}
+    \fontsize{9pt}{10.25pt}\selectfont
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+        \multicolumn{2}{|c|}{} & \multicolumn{2}{c|}{Pref-Attachment} & \multicolumn{2}{c|}{AIDS} \\ \hline
+        BP & Norm & Val & Test & Val & Test \\ \hhline{|=|=|=|=|=|=|}
+        \multirow{3}{*}{yes} & $p=1$ & $5.2 \pm 0.1$ & $6.4 \pm 0.7$ & $3.9 \pm 0.1$ & $17.1 \pm 10.9$ \\ \hhline{|~|-|-|-|-|-|}
+        & $p=2$ & $4.8 \pm 0.1$ & $5.7 \pm 0.2$ & $3.9 \pm 0.2$ & $8.6 \pm 2.6$ \\ \hhline{|~|-|-|-|-|-|}
+        & MLP & $4.5 \pm 0.1$ & $\boldsymbol{4.5 \pm 0.3}$ & $3.5 \pm 0.03$ & $\boldsymbol{4.7 \pm 0.1}$ \\ \hline
+        \multirow{3}{*}{no}  & $p=1$ & $4.9 \pm 0.2$ & $5.8 \pm 0.2$ & $3.9 \pm 0.3$ & $16.2 \pm 6.0$ \\ \hhline{|~|-|-|-|-|-|}
+        & $p=2$ & $4.8 \pm 0.1$ & $5.7 \pm 0.6$ & $3.7 \pm 0.2$ & $6.8 \pm 3.4$ \\ \hhline{|~|-|-|-|-|-|}
+        & MLP & $4.2 \pm 0.1$ & $\boldsymbol{4.5 \pm 0.2}$ & $3.3 \pm 0.04$ & $6.2 \pm 1.0$ \\ \hline
+    \end{tabular}
+    \caption{RMSE $\pm$ std (3 runs)}
+    \label{tab:ex1-ablation}
+\end{table}
 
 
-% \begin{table}[ht]
-%     \centering
-%    \begin{tabular}{|c|c|c|}
-%         \hline
-%         \textbf{Method}&\textbf{Consensus} &\textbf{Mean} \\
-%         \hline
-%         DGC & L=0 &67.3\\
-%         \hline
-%         GDN & L=0&70.5\\
-%         \hline
-%         DGC & L=10&72.8\\
-%         \hline
-%         GDN & L=10&70.0\\
-%         \hline
-%     \end{tabular}
-%     \caption{Hits@1 (\%) on PASCALVOC}
-%     \label{tab:ex2}
-% \end{table}
+\begin{table}[ht]
+    \centering
+   \begin{tabular}{|c|C{2cm}|C{2cm}|}
+        \hline
+        \textbf{Method}&\textbf{Consensus} &\textbf{Mean} \\
+        \hline
+        DGC & L=0 &67.3\\
+        \hline
+        GDN & L=0&70.5\\
+        \hline
+        DGC & L=10&72.8\\
+        \hline
+        GDN & L=10&70.0\\
+        \hline
+    \end{tabular}
+    \caption{Hits@1 (\%) on PASCALVOC}
+    \label{tab:ex2}
+\end{table}
+
+\begin{equation}
+G = \{V, E\}
+\end{equation}

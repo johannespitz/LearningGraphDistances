@@ -8,24 +8,24 @@ To align our model as much as possible with their work we use the same SplineCNN
 
 In Table \ref{tab:ex2} we report results on the test set of the model with the best validation performance across 18 runs (3 trials, 2 learning rates, and 3 regularization constants), and compare these to the numbers reported by \cite{fey2020_update}. The table shows that using the kernel matrix and the inherent ability to tune the regularization constant improves the base model without consensus. The 3 percent points gain constitute over half of the gains made by the original consensus step. Unfortunately, applying the consensus step to our model was not successful. In fact, by adding our consensus step the performance drops slightly. We believe that the consensus step should be orthogonal to the gains due to the kernel matrix. However, so far, we were not able to improve upon the poor performance even after multiple tweaks to the cost matrix generation.
 
-\begin{table}[ht]
-    \centering
-    \resizebox{\textwidth}{!}{\begin{tabular}{ccccccccccccccccccccccc}
-        \hline
-        \textbf{Method}& &\textbf{Aero}&\textbf{Bike}&\textbf{Bird}&\textbf{Boat}&\textbf{Bottle}&\textbf{Bus}&\textbf{Car}&\textbf{Cat}&\textbf{Chair}&\textbf{Cow}&\textbf{Table}&\textbf{Dog}&\textbf{Horse}&\textbf{M-Bike}&\textbf{Person}&\textbf{Plant}&\textbf{Sheep}&\textbf{Sofa}&\textbf{Train}&\textbf{TV}&\textbf{Mean} \\
-        \hline
-        DGC & L=0 &42.1&57.5&49.6&59.4&83.8&84.0&78.4&67.5&37.3&60.4&85.0&58.0&66.0&54.1&52.6&93.9&60.2&85.6&87.8&82.5&67.3\\
-        \hline
-        GDN & L=0&45.3&63.8&55.5&72.6&88.9&88.5&79.5&69.1&36.8&58.5&82.8&59.2&70.1&59.8&53.4&96.3&63.7&92.5&91.7&85.0&70.5\\
-        \hline
-        DGC & L=10&45.5&67.6&56.5&66.8&86.9&85.2&84.2&73.0&43.6&66.0&92.3&64.0&79.8&56.6&56.1&95.4&64.4&95.0&91.3&86.3&72.8\\
-        \hline
-        GDN & L=10&40.2&59.6&50.1&65.0&87.8&86.7&82.3&69.6&37.4&59.0&93.1&56.7&73.1&52.9&58.5&96.3&62.1&90.0&93.4&87.3&70.0\\
-        \hline
-    \end{tabular}}
-    \caption{Hits@1 (\%) on the PASCALVOC dataset with Berkeley keypoint annotations}
-    \label{tab:ex2}
-\end{table}
+% \begin{table}[ht]
+%     \centering
+%     \resizebox{\textwidth}{!}{\begin{tabular}{ccccccccccccccccccccccc}
+%         \hline
+%         \textbf{Method}& &\textbf{Aero}&\textbf{Bike}&\textbf{Bird}&\textbf{Boat}&\textbf{Bottle}&\textbf{Bus}&\textbf{Car}&\textbf{Cat}&\textbf{Chair}&\textbf{Cow}&\textbf{Table}&\textbf{Dog}&\textbf{Horse}&\textbf{M-Bike}&\textbf{Person}&\textbf{Plant}&\textbf{Sheep}&\textbf{Sofa}&\textbf{Train}&\textbf{TV}&\textbf{Mean} \\
+%         \hline
+%         DGC & L=0 &42.1&57.5&49.6&59.4&83.8&84.0&78.4&67.5&37.3&60.4&85.0&58.0&66.0&54.1&52.6&93.9&60.2&85.6&87.8&82.5&67.3\\
+%         \hline
+%         GDN & L=0&45.3&63.8&55.5&72.6&88.9&88.5&79.5&69.1&36.8&58.5&82.8&59.2&70.1&59.8&53.4&96.3&63.7&92.5&91.7&85.0&70.5\\
+%         \hline
+%         DGC & L=10&45.5&67.6&56.5&66.8&86.9&85.2&84.2&73.0&43.6&66.0&92.3&64.0&79.8&56.6&56.1&95.4&64.4&95.0&91.3&86.3&72.8\\
+%         \hline
+%         GDN & L=10&40.2&59.6&50.1&65.0&87.8&86.7&82.3&69.6&37.4&59.0&93.1&56.7&73.1&52.9&58.5&96.3&62.1&90.0&93.4&87.3&70.0\\
+%         \hline
+%     \end{tabular}}
+%     \caption{Hits@1 (\%) on the PASCALVOC dataset with Berkeley keypoint annotations}
+%     \label{tab:ex2}
+% \end{table}
 
 % 0.4016 0.5957 0.5005 0.6497 0.8784 0.8669 0.8227 0.6962 0.3740 0.5895 0.9310 0.5673 0.7313 0.5288 0.5853 0.9634 0.6207 0.8955 0.9337 0.8725
 % 0.7003

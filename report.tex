@@ -69,9 +69,13 @@ Let $\mathcal{G}$ be a set of graphs, where each graph $G = \{V, E\} \in \mathca
 
 Graph neural networks based on the message passing scheme (\citealp{gilmer2017}) aggregate the features of nodes in the neighborhood $\mathcal{N}_1$ of node $i$ along their edges with features $e_{j,i}$. The aggregate $a_i^l$ is then used to update the node feature $h_i^{l-1}$ in the next layer $l$.
 \begin{equation}
-    a_i^l = \operatorname{Aggregate}^l\left(\{\!\!\{(h_j^{l-1}, e_{j,i}) : j \in \mathcal{N}_1(i)\}\!\!\}\right), \quad
-    h_i^l = \operatorname{Update}^l\left( h_i^{l-1}, a_i^l \right)
+    a_i^l = \operatorname{Aggregate}\left(\{\!\!\{(h_j^{l-1}, e_{j,i}) : j \in \mathcal{N}_1(i)\}\!\!\}\right) \quad
+    h_i^l = \operatorname{Update}\left( h_i^{l-1}, a_i^l \right)
 \end{equation}
+\begin{equation}
+    h_i^0 = v_i \in V
+\end{equation}
+
 Here $h_i^0 = v_i \in V$ and $\{\!\!\{ \dots \}\!\!\}$ denotes a multiset.
 
 \input{01c_related_work.tex}

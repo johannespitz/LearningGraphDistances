@@ -4,7 +4,7 @@ A metric is defined by four properties: non-negativity, symmetry, the identity o
 
 While the model should ideally be able to learn any metric on a set of graphs, we will focus on the ubiquitous GED for the derivation. The GED between two graphs is defined analog to the String Edit Distance.
 \begin{equation}
-     \text{GED}(G_{1},G_{2}) = \min_{(e_{1},...,e_{k}) \in \mathcal{P}(g_{1},g_{2})} \sum_{i=1}^{k} c(e_{i})
+     \text{GED}(G_{1},G_{2}) = \min_{(e_{1},...,e_{k}) \in \mathcal{P}(G_{1},G_{2})} \sum_{i=1}^{k} c(e_{i})
 \end{equation}
 where $e_{i}$ are edit operations (edge/node addition, removal, and substitution), $c(e)$ is the cost of an edit operation, and $\mathcal{P}(G_{1},G_{2})$ is the set of all possible edit paths that transform $G_{1}$ into a graph isomorphic to $G_{2}$.
 
